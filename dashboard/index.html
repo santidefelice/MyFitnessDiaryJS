@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-left">
+          <button class="profile-btn" id="profileBtn">
+            <span class="profile-icon"></span>
+          </button>
+          <h1 class="header-title">My Fitness Diary</h1>
+        </div>
+        <div class="header-date">
+          <span class="icon"> </span>
+          <span id="currentDate"></span>
+        </div>
+      </header>
+
+      <main>
+        <section id="todayWorkout">
+          <div class="section-header">
+            <h2 class="section-title">Today's Workout</h2>
+            <span class="workout-time" id="workoutTime"></span>
+          </div>
+
+          <div class="card" id="todayWorkoutCard"></div>
+        </section>
+
+        <section id="weeklyPlan">
+          <div class="section-header">
+            <h2 class="section-title">This Week's Plan</h2>
+            <button class="view-all" id="viewAllBtn">
+              View All
+              <span class="icon">▶</span>
+            </button>
+          </div>
+
+          <div class="weekly-list" id="weeklyWorkoutsList"></div>
+        </section>
+      </main>
+
+      <button class="add-workout-btn" id="addWorkoutBtn">+</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
