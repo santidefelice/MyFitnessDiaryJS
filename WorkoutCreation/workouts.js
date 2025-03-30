@@ -1,3 +1,65 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import {collection, addDoc, getDocs, getFirestore, doc, updateDoc, arrayUnion} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
+  authDomain: "myfitnessdiary-98de3.firebaseapp.com",
+  databaseURL: "https://myfitnessdiary-98de3-default-rtdb.firebaseio.com",
+  projectId: "myfitnessdiary-98de3",
+  storageBucket: "myfitnessdiary-98de3.firebasestorage.app",
+  messagingSenderId: "654598300156",
+  appId: "1:654598300156:web:d185f121d6b680afcc1279"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+const skillLevelEL = document.getElementById("skillLevel");
+const splitChoiceEL = document.getElementById("splitChoice");
+const exerciseTypeEL = document.getElementById("exerciseType");
+const ageEL = document.getElementById("age");
+const weightEL = document.getElementById("weight");
+const heightEL = document.getElementById("height");
+const genderEL = document.getElementById("gender");
+
+const generateWorkoutBtnEL = document.getElementById("generateWorkoutBtn");
+
+
+
+
+
+
+async function addUser(skillLevel, splitChoice, exerciseType, age, weight, height, gender, workoutText, calorieInfo) {
+     try {
+         const docRef = await addDoc(collection(db, "users"), {
+             skillLevel: skillLevel,
+             splitChoice: splitChoice,
+             exerciseType: exerciseType,
+             age: age,
+             weight: weight,
+             height: height,
+             gender: gender,
+
+             workoutPlan: workoutText,
+
+            maintenanceCalories: calorieInfo.maintenance,
+            bulkingCalories: calorieInfo.bulking,
+            cuttingCalories: calorieInfo.cutting,
+             
+         });
+         console.log("Document written with ID: ", docRef.id);
+     } catch (e) {
+         console.error("Error adding document: ", e);
+     }
+ }
+
+
+
+
 const exercises = [
     { name: "Pullups", code: "11" },
     { name: "Inverted Rows", code: "11" },
@@ -136,10 +198,11 @@ const calculateCalories = (age, weight, height, gender, activityLevel) => {
     };
 }
 
-document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
+document.getElementById("generateWorkoutBtn").addEventListener("click", async () => {
     const skillLevel = parseInt(document.getElementById("skillLevel").value);
     const splitChoice = parseInt(document.getElementById("splitChoice").value);
     const exerciseType = parseInt(document.getElementById("exerciseType").value);
+    
     
     // Get user physical details
     const age = parseInt(document.getElementById("age").value);
@@ -299,4 +362,69 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
     workoutOutput += `</ul></div>`;
 
     document.getElementById("workoutOutput").innerHTML = workoutOutput;
+
+
+    try {
+
+        const auth = getAuth();
+
+        const checkAuth = () => {
+            return new Promise((resolve) => {
+                const unsubscribe = onAuthStateChanged(auth, (user) => {
+                    unsubscribe(); // Stop listening after first response
+                    resolve(user);
+                });
+            });
+        };
+
+        const user = await checkAuth();
+
+        if (!user) {
+            alert("You need to be logged in to generate and save a workout.");
+            // Optionally redirect to login page
+            window.location.href = "/Login/index.html"; 
+            return;
+        }
+
+        const uid = user.uid;
+        const userDocId = localStorage.getItem('userDocId');
+
+        const workoutText = workoutOutput.toString().replace(/<[^>]*>?/gm, '');
+
+        const workoutDocRef = await addDoc(collection(db, "workouts"), {
+            uid: uid,  // User's auth ID
+            userDocId: userDocId, // Reference to user document
+            skillLevel: skillLevel,
+            splitChoice: splitChoice,
+            exerciseType: exerciseType,
+            age: age,
+            weight: weight,
+            height: height,
+            gender: gender,
+            workoutPlan: workoutText,
+            maintenanceCalories: calorieInfo.maintenance,
+            bulkingCalories: calorieInfo.bulking,
+            cuttingCalories: calorieInfo.cutting,
+            createdAt: new Date()
+        });
+
+        if (userDocId) {
+            try {
+                const userRef = doc(db, "users", userDocId);
+                await updateDoc(userRef, {
+                    workouts: arrayUnion(workoutDocRef.id)
+                });
+                console.log("User document updated with workout reference");
+            } catch (updateError) {
+                console.error("Error updating user document:", updateError);
+                // This error shouldn't prevent the workout from being saved
+            }
+        }
+
+
+        alert("Workout and calorie information saved successfully!");
+    } catch(error) {
+        console.error("Error saving workout: ", error);
+        alert("Failed to save workout. Please try again.");
+    }
 });
