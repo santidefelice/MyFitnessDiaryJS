@@ -29,7 +29,24 @@ const signInBtnEL = document.getElementById("sign-in-btn");
 const signOutBtnEL = document.getElementById("logout-btn");
 
 
-signInBtnEL.addEventListener("click", authCreateAccountWithEmail);
+signInBtnEL.addEventListener("click", function(e) {
+    e.preventDefault();
+    
+    // Execute the account creation function
+    const email = emailInputEL.value;
+    const password = passwordInputEL.value;
+    
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            clearAuthFields();
+            // Navigate to the new page after successful account creation
+            window.location.replace("/WorkoutCreation/workouts.html"); // Replace with your page name
+        })
+        .catch((error) => {
+            console.error(error.message);
+            // You might want to show an error message here instead of navigating
+        });
+});
 loginBtnEL.addEventListener("click", authSignInWithEmail);
 signOutBtnEL.addEventListener("click", authLogout);
 
@@ -37,7 +54,7 @@ signOutBtnEL.addEventListener("click", authLogout);
 //main code
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        showLoggedInView()
+        showLoggedInView();
     } else {
         showLoggedOutView()
     }
@@ -59,7 +76,7 @@ function authCreateAccountWithEmail(e) {
 
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            clearAuthFields()
+            clearAuthFields();
         })
         .catch((error) => {
             console.error(error.message) 
