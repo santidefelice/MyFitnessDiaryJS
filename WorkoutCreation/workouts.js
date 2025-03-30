@@ -348,10 +348,10 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
             return;
     }
 
-    // Now calculate calorie needs based on user details and skill level
+    // Calculate calorie needs based on user details and skill level
     const calorieInfo = calculateCalories(age, weight, height, gender, skillLevel);
     
-    // Add calorie information to the output
+    // Calorie information to the output
     workoutOutput += `<br><br><div class="calorie-info">`;
     workoutOutput += `<h3>Calorie Information</h3>`;
     workoutOutput += `<p>Based on your age (${age}), weight (${weight}kg), height (${height}cm), gender (${gender}) and activity level:</p>`;
