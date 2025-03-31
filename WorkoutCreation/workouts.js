@@ -602,4 +602,4 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
     document.getElementById("workoutOutput").innerHTML = workoutOutput;
     
     updateDashboard(workoutOutput);
-});
+}); 
