@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+import {collection, addDoc, getDocs, getFirestore} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
 
 // Your web app's Firebase configuration
@@ -17,6 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const viewLoggedOut = document.getElementById("logged-out-section")
 const viewLoggedIn = document.getElementById("logged-in-section")
@@ -40,14 +42,51 @@ signInBtnEL.addEventListener("click", function(e) {
         .then((userCredential) => {
             clearAuthFields();
             // Navigate to the new page after successful account creation
-            window.location.replace("/WorkoutCreation/workouts.html"); // Replace with your page name
+            window.location.href= "/WorkoutCreation/workouts.html";
+            const userID = userCredential.user.uid;
+
+            return addDoc(collection(db, "users"), {
+                uid: userID,
+                email: email,
+                userID: userID
+            });
+
+
+        })
+        .then((docRef) => {
+            localStorage.setItem('userDocId', docRef.id);
+            localStorage.setItem('uid', auth.currentUser.uid);
+
+            clearAuthFields();
+
+            window.location.href = "/WorkoutCreation/workouts.html";
+        })
+        .catch((error) => {
+            console.error(error.message);
+            // You might want to show an error message here instead of navigating
+        });
+
+        
+});
+
+loginBtnEL.addEventListener("click", function(e) {
+    e.preventDefault();
+    
+    // Execute the account creation function
+    const email = emailInputEL.value;
+    const password = passwordInputEL.value;
+    
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            clearAuthFields();
+            // Navigate to the new page after successful account creation
+            window.location.href= "/dashboard/index.html";
         })
         .catch((error) => {
             console.error(error.message);
             // You might want to show an error message here instead of navigating
         });
 });
-loginBtnEL.addEventListener("click", authSignInWithEmail);
 signOutBtnEL.addEventListener("click", authLogout);
 
 
@@ -62,6 +101,8 @@ onAuthStateChanged(auth, (user) => {
 
 
 
+
+
 //main code
 
 
@@ -69,19 +110,16 @@ onAuthStateChanged(auth, (user) => {
 
 //functions
 
-function authCreateAccountWithEmail(e) {
-    e.preventDefault()
-    const email = emailInputEL.value
-    const password = passwordInputEL.value
-
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            clearAuthFields();
-        })
-        .catch((error) => {
-            console.error(error.message) 
-        })
-}
+ async function addUser(email) {
+     try {
+         const docRef = await addDoc(collection(db, "users"), {
+             email: email,
+         });
+         console.log("Document written with ID: ", docRef.id);
+     } catch (e) {
+         console.error("Error adding document: ", e);
+     }
+ }
 
 function authSignInWithEmail(e) {
     e.preventDefault()

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Fitness Diary - Progress</title>
+    <link rel="stylesheet" href="progress.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Workouts</a></li>
+                <li><a href="#" class="active">Progress</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="/dashboard/index.html">Dashboard</a></li><!-- This lets the user click dashboard and go to dashboard -->
+            </ul>
+        </nav>
+        
+        <header>
+            <h1>My Fitness Diary</h1>
+            <p class="date">Sunday, March 30, 2025</p>
+        </header>
+
+        <section class="progress-container">
+            <div class="progress-section">
+                <h2>Weight Progress <button class="edit-btn" id="edit-weight-btn"><i class="edit-icon">✏️</i></button> </h2>
+                <div class="card">
+                    <div class="goal-info">
+                        <div>
+                            <p class="goal-label">Current Weight</p>
+                            <p class="goal-value">185 lbs</p>
+                        </div>
+                        <div>
+                            <p class="goal-label">Goal Weight</p>
+                            <p class="goal-value">175 lbs</p>
+                        </div>
+                        <div>
+                            <p class="goal-label">Progress</p>
+                            <p class="goal-value">-5 lbs</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                    <!-- Weight Goals Edit Modal -->
+                    <div id="weight-edit-modal" class="edit-modal">
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h3>Edit Weight Goals</h3>
+                            <div class="form-group">
+                                <label for="current-weight-input">Current Weight (lbs)</label>
+                                <input type="number" id="current-weight-input" min="0" max="500">
+                            </div>
+                            <div class="form-group">
+                                <label for="goal-weight-input">Goal Weight (lbs)</label>
+                                <input type="number" id="goal-weight-input" min="0" max="500">
+                            </div>
+                            <div class="form-group">
+                                <label for="goal-type-select">Goal Type</label>
+                                <select id="goal-type-select">
+                                    <option value="loss">Weight Loss</option>
+                                    <option value="gain">Weight Gain</option>
+                                    <option value="maintain">Maintain Weight</option>
+                                </select>
+                            </div>
+                            <button id="weight-save-btn" class="btn">Save Changes</button>
+                            
+                            <h4>Monthly Weight Tracking</h4>
+                            <div class="form-group">
+                                <label for="month-select">Select Month</label>
+                                <select id="month-select">
+                                    <option value="0">January</option>
+                                    <option value="1">February</option>
+                                    <option value="2">March</option>
+                                    <option value="3">April</option>
+                                    <option value="4">May</option>
+                                    <option value="5">June</option>
+                                    <option value="6">July</option>
+                                    <option value="7">August</option>
+                                    <option value="8">September</option>
+                                    <option value="9">October</option>
+                                    <option value="10">November</option>
+                                    <option value="11">December</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="month-weight-input">Weight for Selected Month (lbs)</label>
+                                <input type="number" id="month-weight-input" min="0" max="500">
+                            </div>
+                            <button id="month-weight-save-btn" class="btn">Update Monthly Weight</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h2>Strength Goals <button class="edit-btn" id="edit-strength-btn"><i class="edit-icon">✏️</i></button></h2>
+                <div class="strength-goals">
+                    <div class="card strength-card">
+                        <h3>Bench Press</h3>
+                        <div class="progress-circle-container">
+                            <canvas id="benchProgress" class="progress-circle"></canvas>
+                            <div class="progress-text">
+                                <span class="current">185</span>
+                                <span class="separator">/</span>
+                                <span class="goal">225</span>
+                            </div>
+                        </div>
+                        <p class="progress-label">One Plate to Two Plate</p>
+                    </div>
+                    <div class="card strength-card">
+                        <h3>Squat</h3>
+                        <div class="progress-circle-container">
+                            <canvas id="squatProgress" class="progress-circle"></canvas>
+                            <div class="progress-text">
+                                <span class="current">225</span>
+                                <span class="separator">/</span>
+                                <span class="goal">315</span>
+                            </div>
+                        </div>
+                        <p class="progress-label">Two Plate to Three Plate</p>
+                    </div>
+                    <div class="card strength-card">
+                        <h3>Deadlift</h3>
+                        <div class="progress-circle-container">
+                            <canvas id="deadliftProgress" class="progress-circle"></canvas>
+                            <div class="progress-text">
+                                <span class="current">275</span>
+                                <span class="separator">/</span>
+                                <span class="goal">405</span>
+                            </div>
+                        </div>
+                        <p class="progress-label">Progress to Four Plate</p>
+                    </div>
+                </div>
+                
+                <!-- Strength Goals Edit Modal -->
+                <div id="strength-edit-modal" class="edit-modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>Edit Strength Goals</h3>
+                        
+                        <div id="current-goals-container">
+                            <!-- Goals will be rendered here -->
+                        </div>
+                        
+                        <h4>Add New Goal</h4>
+                        <div class="form-group">
+                            <label for="exercise-select">Exercise</label>
+                            <select id="exercise-select">
+                                <option value="">Select an exercise</option>
+                                <!-- Options will be added dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="current-strength">Current (lbs)</label>
+                            <input type="number" id="current-strength" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="goal-strength">Goal (lbs)</label>
+                            <input type="number" id="goal-strength" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="goal-description">Description (optional)</label>
+                            <input type="text" id="goal-description">
+                        </div>
+                        <div class="form-group">
+                            <label for="exercise-color">Color</label>
+                            <input type="color" id="exercise-color" value="#4a6cf7">
+                        </div>
+                        <button id="strength-save-btn" class="btn">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h2>Muscle Group Volume <button class="edit-btn" id="edit-volume-btn"><i class="edit-icon">✏️</i></button></h2>
+                <div class="card">
+                    <div class="volume-controls">
+                        <button id="prev-week" class="btn">Previous Week</button>
+                        <span id="week-display">Week of Mar 24 - Mar 30</span>
+                        <button id="next-week" class="btn">Next Week</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                    
+                    <!-- Volume Input Modal -->
+                    <div id="volume-input-modal" class="edit-modal">
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h3>Input Weekly Volume</h3>
+                            <p id="input-week-display">Week of Mar 24 - Mar 30</p>
+                            <div id="volume-weekly-inputs">
+                                <!-- Weekly volume inputs will be rendered here -->
+                            </div>
+                            <button id="volume-input-save-btn" class="btn">Save Changes</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Volume Targets Edit Modal -->
+                    <div id="volume-edit-modal" class="edit-modal">
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h3>Edit Volume Targets</h3>
+                            <div id="volume-inputs">
+                                <!-- Volume inputs will be rendered here -->
+                            </div>
+                            <button id="volume-save-btn" class="btn">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add input button -->
+                <div class="input-volume-container">
+                    <button id="input-volume-btn" class="btn input-volume-btn">Input This Week's Volume</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="progress.js"></script>
+</body>
+</html>

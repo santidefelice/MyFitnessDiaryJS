@@ -1,3 +1,65 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import {collection, addDoc, getDocs, getFirestore, doc, updateDoc, arrayUnion} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
+  authDomain: "myfitnessdiary-98de3.firebaseapp.com",
+  databaseURL: "https://myfitnessdiary-98de3-default-rtdb.firebaseio.com",
+  projectId: "myfitnessdiary-98de3",
+  storageBucket: "myfitnessdiary-98de3.firebasestorage.app",
+  messagingSenderId: "654598300156",
+  appId: "1:654598300156:web:d185f121d6b680afcc1279"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+const skillLevelEL = document.getElementById("skillLevel");
+const splitChoiceEL = document.getElementById("splitChoice");
+const exerciseTypeEL = document.getElementById("exerciseType");
+const ageEL = document.getElementById("age");
+const weightEL = document.getElementById("weight");
+const heightEL = document.getElementById("height");
+const genderEL = document.getElementById("gender");
+
+const generateWorkoutBtnEL = document.getElementById("generateWorkoutBtn");
+
+
+
+
+
+
+async function addUser(skillLevel, splitChoice, exerciseType, age, weight, height, gender, workoutText, calorieInfo) {
+     try {
+         const docRef = await addDoc(collection(db, "users"), {
+             skillLevel: skillLevel,
+             splitChoice: splitChoice,
+             exerciseType: exerciseType,
+             age: age,
+             weight: weight,
+             height: height,
+             gender: gender,
+
+             workoutPlan: workoutText,
+
+            maintenanceCalories: calorieInfo.maintenance,
+            bulkingCalories: calorieInfo.bulking,
+            cuttingCalories: calorieInfo.cutting,
+             
+         });
+         console.log("Document written with ID: ", docRef.id);
+     } catch (e) {
+         console.error("Error adding document: ", e);
+     }
+ }
+
+
+
+
 const exercises = [
     { name: "Pullups", code: "11" },
     { name: "Inverted Rows", code: "11" },
@@ -136,313 +198,11 @@ const calculateCalories = (age, weight, height, gender, activityLevel) => {
     };
 }
 
-const updateDashboard = (workoutOutput) => {
-    // Parse the generated workout HTML
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = workoutOutput;
-    
-    // Extract days per week
-    const daysPerWeekMatch = workoutOutput.match(/Workout days per week: (\d+)/);
-    const daysPerWeek = daysPerWeekMatch ? parseInt(daysPerWeekMatch[1]) : 3;
-    
-    // Extract all workout sections (PULL, PUSH, LEGS, etc.)
-    const sections = tempDiv.querySelectorAll('strong');
-    const workoutSections = [];
-    
-    for (let i = 0; i < sections.length; i++) {
-        const sectionTitle = sections[i].textContent.replace(':', '');
-        const sectionExercises = [];
-        
-        // Find all exercises in this section
-        let nextBr = sections[i].nextSibling;
-        while (nextBr) {
-            if (nextBr.nodeType === 1 && nextBr.tagName === 'BR') {
-                let exerciseLine = nextBr.nextSibling;
-                if (exerciseLine && exerciseLine.nodeType === 3) { // Text node
-                    const line = exerciseLine.textContent.trim();
-                    if (line && line.includes(' - ')) {
-                        const parts = line.split(' - ');
-                        const name = parts[0].trim();
-                        if (parts[1] && parts[1].includes(' sets of ')) {
-                            const setsPart = parts[1].split(' sets of ');
-                            const sets = parseInt(setsPart[0]);
-                            const reps = setsPart[1].replace(' reps', '');
-                            
-                            sectionExercises.push({ name, sets, reps });
-                        }
-                    }
-                }
-            }
-            
-            if (nextBr.nodeType === 1 && (nextBr.tagName === 'STRONG' || nextBr.tagName === 'DIV')) {
-                break;
-            }
-            
-            nextBr = nextBr.nextSibling;
-        }
-        
-        let nextNode = sections[i].nextSibling;
-        if (nextNode && nextNode.nodeType === 3) { 
-            const lines = nextNode.textContent.split('\n');
-            lines.forEach(line => {
-                line = line.trim();
-                if (line && line.includes(' - ')) {
-                    const parts = line.split(' - ');
-                    const name = parts[0].trim();
-                    if (parts[1] && parts[1].includes(' sets of ')) {
-                        const setsPart = parts[1].split(' sets of ');
-                        const sets = parseInt(setsPart[0]);
-                        const reps = setsPart[1].replace(' reps', '');
-                        
-                        sectionExercises.push({ name, sets, reps });
-                    }
-                }
-            });
-        }
-        
-        const lines = workoutOutput.split('<br>');
-        let collectingForSection = false;
-        
-        lines.forEach(line => {
-            line = line.trim();
-            if (line.includes(`<strong>${sectionTitle}:</strong>`)) {
-                collectingForSection = true;
-                return;
-            }
-            
-            if (collectingForSection && line.includes('<strong>')) {
-                collectingForSection = false;
-                return;
-            }
-            
-            if (collectingForSection && line && line.includes(' - ')) {
-                const parts = line.split(' - ');
-                const name = parts[0].trim();
-                if (parts[1] && parts[1].includes(' sets of ')) {
-                    const setsPart = parts[1].split(' sets of ');
-                    const sets = parseInt(setsPart[0]);
-                    const reps = setsPart[1].replace(' reps', '');
-                    
-                
-                    const existingIndex = sectionExercises.findIndex(ex => ex.name === name);
-                    if (existingIndex === -1) {
-                        sectionExercises.push({ name, sets, reps });
-                    }
-                }
-            }
-        });
-        
-        if (sectionExercises.length > 0) {
-            workoutSections.push({
-                title: sectionTitle,
-                exercises: sectionExercises
-            });
-        }
-    }
-    
-    console.log("Parsed workout sections:", workoutSections);
-    
-    let calorieInfo = null;
-    const calorieSection = tempDiv.querySelector('.calorie-info');
-    if (calorieSection) {
-        const calorieItems = calorieSection.querySelectorAll('li');
-        calorieInfo = {};
-        
-        calorieItems.forEach(item => {
-            const text = item.textContent;
-            if (text.includes('Maintenance')) {
-                const calories = parseInt(text.match(/\d+/)[0]);
-                calorieInfo.maintenance = calories;
-            } else if (text.includes('Bulking')) {
-                const calories = parseInt(text.match(/\d+/)[0]);
-                calorieInfo.bulking = calories;
-            } else if (text.includes('Cutting')) {
-                const calories = parseInt(text.match(/\d+/)[0]);
-                calorieInfo.cutting = calories;
-            }
-        });
-    }
-    
-    
-    if (workoutSections.length === 0) {
-        const exerciseLines = workoutOutput.split('<br>').filter(line => 
-          line.includes(' - ') && !line.includes('Workout days per week:'));
-        
-        const extractedExercises = [];
-        exerciseLines.forEach(line => {
-          if (line && line.includes(' - ')) {
-            const parts = line.split(' - ');
-            const name = parts[0].trim();
-            if (parts[1] && parts[1].includes(' sets of ')) {
-              const setsPart = parts[1].split(' sets of ');
-              const sets = parseInt(setsPart[0]);
-              const reps = setsPart[1].replace(' reps', '');
-              
-              extractedExercises.push({ name, sets, reps });
-            }
-          }
-        });
-        
-        if (extractedExercises.length > 0) {
-            workoutSections.push({
-                title: "Workout",
-                exercises: extractedExercises
-            });
-        }
-    }
-    
-
-    const today = new Date();
-    const currentDayIndex = today.getDay();
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
-    // Create workouts for the week
-    const weeklyWorkouts = {};
-    
-    //  distribute workouts based on number of sections and days per week
-    if (workoutSections.length === 0) {
-        console.error("No workout sections found");
-        return;
-    }
-    
-    // Create a workout for today first
-    const todayName = dayNames[currentDayIndex];
-    let todayWorkoutSection = workoutSections[0]; // Default to first section
-    
-    // For today's workout, use the first section
-    weeklyWorkouts[todayName] = {
-        title: todayWorkoutSection.title,
-        description: `${todayWorkoutSection.title} workout`,
-        exercises: todayWorkoutSection.exercises,
-        date: today.toISOString(),
-        completed: false,
-        calorieInfo: calorieInfo
-    };
-    
-    //  distributing workouts
-    let dayIncrement = Math.floor(7 / workoutSections.length);
-    if (dayIncrement < 1) dayIncrement = 1;
-    
-    // Distribute the rest of the workouts across the week
-    let currentSectionIndex = 1; 
-    for (let i = 1; i < 7; i++) {
-        const nextDayIndex = (currentDayIndex + i) % 7;
-        const dayName = dayNames[nextDayIndex];
-        
-        // If we've used all workout sections, cycle back to the beginning
-        if (currentSectionIndex >= workoutSections.length) {
-            currentSectionIndex = 0;
-        }
-        
-        // Only assign workouts up to the specified days per week
-        if (i < daysPerWeek) {
-            const section = workoutSections[currentSectionIndex];
-            
-            weeklyWorkouts[dayName] = {
-                title: section.title,
-                description: `${section.title} workout`,
-                exercises: section.exercises,
-                date: new Date(today.getTime() + i * 24 * 60 * 60 * 1000).toISOString(),
-                completed: false,
-                calorieInfo: calorieInfo
-            };
-            
-            // Advance to the next section for the next day
-            currentSectionIndex++;
-        } else {
-            // Rest days
-            weeklyWorkouts[dayName] = {
-                title: "Rest Day",
-                description: "Recovery day",
-                exercises: [],
-                date: new Date(today.getTime() + i * 24 * 60 * 60 * 1000).toISOString(),
-                completed: false
-            };
-        }
-    }
-    
-    console.log("Generated weekly workouts:", weeklyWorkouts);
-    
-    // Send the workout data to the parent window
-    window.parent.postMessage({
-        type: 'workoutGenerated',
-        workout: weeklyWorkouts[todayName], // Today's workout
-        weeklyWorkouts: weeklyWorkouts // All workouts for the week
-    }, '*');
-    
-    // Also update the local workout output display
-    document.getElementById("workoutOutput").innerHTML = workoutOutput;
-};
-// Update the status in the weekly workout list
-const updateWeeklyWorkoutStatus = (dashboardWindow) => {
-    const today = new Date();
-    const dayIndex = today.getDay(); 
-    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayIndex];
-    
-    const weeklyWorkoutsList = dashboardWindow.document.getElementById("weeklyWorkoutsList");
-    if (weeklyWorkoutsList) {
-      const workoutCards = weeklyWorkoutsList.querySelectorAll('.workout-card');
-      workoutCards.forEach(card => {
-        const dayElement = card.querySelector('.workout-day');
-        if (dayElement && dayElement.textContent === dayName) {
-          const statusElement = card.querySelector('.workout-status');
-          if (statusElement) {
-            statusElement.classList.add('completed');
-          }
-        }
-      });
-    }
-};
-
-// Update weekly workout data
-const updateWeeklyWorkout = (dashboardWindow, workoutData) => {
-    const today = new Date();
-    const dayIndex = today.getDay();
-    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayIndex];
-    
-    const weeklyWorkoutsList = dashboardWindow.document.getElementById("weeklyWorkoutsList");
-    if (weeklyWorkoutsList) {
-      const workoutCards = weeklyWorkoutsList.querySelectorAll('.workout-card');
-      
-      workoutCards.forEach(card => {
-        const dayElement = card.querySelector('.workout-day');
-        if (dayElement && dayElement.textContent === dayName) {
-          // Update title
-          const titleElement = card.querySelector('.workout-title');
-          if (titleElement) {
-            titleElement.textContent = workoutData.title;
-          }
-          
-          // Update description
-          const descriptionElement = card.querySelector('.workout-description');
-          if (descriptionElement) {
-            descriptionElement.textContent = "Generated workout";
-          }
-          
-          // Update exercise list
-          const exerciseListId = card.querySelector('.see-more-btn')?.dataset.targetId;
-          if (exerciseListId) {
-            const exerciseList = dashboardWindow.document.getElementById(exerciseListId);
-            if (exerciseList) {
-              exerciseList.innerHTML = '';
-              
-              workoutData.exercises.forEach(exercise => {
-                const exerciseItem = dashboardWindow.document.createElement("li");
-                exerciseItem.className = "exercise-item";
-                exerciseItem.textContent = `${exercise.name}: ${exercise.sets} sets x ${exercise.reps}`;
-                exerciseList.appendChild(exerciseItem);
-              });
-            }
-          }
-        }
-      });
-    }
-};
-
-document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
+document.getElementById("generateWorkoutBtn").addEventListener("click", async () => {
     const skillLevel = parseInt(document.getElementById("skillLevel").value);
     const splitChoice = parseInt(document.getElementById("splitChoice").value);
     const exerciseType = parseInt(document.getElementById("exerciseType").value);
+    
     
     // Get user physical details
     const age = parseInt(document.getElementById("age").value);
@@ -588,8 +348,10 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
             return;
     }
 
+    // Calculate calorie needs based on user details and skill level
     const calorieInfo = calculateCalories(age, weight, height, gender, skillLevel);
     
+    // Calorie information to the output
     workoutOutput += `<br><br><div class="calorie-info">`;
     workoutOutput += `<h3>Calorie Information</h3>`;
     workoutOutput += `<p>Based on your age (${age}), weight (${weight}kg), height (${height}cm), gender (${gender}) and activity level:</p>`;
@@ -600,6 +362,69 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
     workoutOutput += `</ul></div>`;
 
     document.getElementById("workoutOutput").innerHTML = workoutOutput;
-    
-    updateDashboard(workoutOutput);
-}); 
+
+
+    try {
+
+        const auth = getAuth();
+
+        const checkAuth = () => {
+            return new Promise((resolve) => {
+                const unsubscribe = onAuthStateChanged(auth, (user) => {
+                    unsubscribe(); // Stop listening after first response
+                    resolve(user);
+                });
+            });
+        };
+
+        const user = await checkAuth();
+
+        if (!user) {
+            alert("You need to be logged in to generate and save a workout.");
+            // Optionally redirect to login page
+            window.location.href = "/Login/index.html"; 
+            return;
+        }
+
+        const uid = user.uid;
+        const userDocId = localStorage.getItem('userDocId');
+
+        const workoutText = workoutOutput.toString().replace(/<[^>]*>?/gm, '');
+
+        const workoutDocRef = await addDoc(collection(db, "workouts"), {
+            uid: uid,  // User's auth ID
+            userDocId: userDocId, // Reference to user document
+            skillLevel: skillLevel,
+            splitChoice: splitChoice,
+            exerciseType: exerciseType,
+            age: age,
+            weight: weight,
+            height: height,
+            gender: gender,
+            workoutPlan: workoutText,
+            maintenanceCalories: calorieInfo.maintenance,
+            bulkingCalories: calorieInfo.bulking,
+            cuttingCalories: calorieInfo.cutting,
+            createdAt: new Date()
+        });
+
+        if (userDocId) {
+            try {
+                const userRef = doc(db, "users", userDocId);
+                await updateDoc(userRef, {
+                    workouts: arrayUnion(workoutDocRef.id)
+                });
+                console.log("User document updated with workout reference");
+            } catch (updateError) {
+                console.error("Error updating user document:", updateError);
+                // This error shouldn't prevent the workout from being saved
+            }
+        }
+
+
+        alert("Workout and calorie information saved successfully!");
+    } catch(error) {
+        console.error("Error saving workout: ", error);
+        alert("Failed to save workout. Please try again.");
+    }
+});
