@@ -1,4 +1,3 @@
-/* Reset and global styles */
 * {
   margin: 0;
   padding: 0;
@@ -11,14 +10,12 @@ body {
   color: #333;
 }
 
-/* Layout styles */
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
   width: 100%;
 }
 
-/* Sidebar styles */
 .sidebar {
   width: 90px;
   min-height: 100vh;
@@ -29,7 +26,6 @@ body {
   top: 0;
 }
 
-/* Sidenav styles */
 .sidenav {
   height: 100%;
   padding: 1rem 0;
@@ -83,26 +79,23 @@ body {
   margin: 0.75rem 1rem;
 }
 
-/* Main content styles */
 .main-content {
   flex: 1;
   overflow-x: hidden;
 }
 
-/* Container styles */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
 }
 
-/* Header styles - Changed to blue */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem; /* Reduced margin for calendar placement */
-  background-color: #1a73e8; /* Blue header background */
+  margin-bottom: 1rem; 
+  background-color: #1a73e8; 
   padding: 1rem 1.5rem;
   color: white;
   border-radius: 0.5rem;
@@ -113,139 +106,32 @@ header {
   align-items: center;
 }
 
-.profile-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.2); /* Adjusted for blue background */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-  cursor: pointer;
-}
-
-.profile-icon {
-  width: 20px;
-  height: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Adjusted for blue background */
-  border-radius: 50%;
-}
-
 .header-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white; /* Adjusted for blue background */
+  color: white; 
 }
 
 .header-date {
   display: flex;
   align-items: center;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9); /* Adjusted for blue background */
+  color: rgba(255, 255, 255, 0.9); 
 }
 
-/* Calendar styles - New section */
-.calendar-container {
-  float: right;
-  width: 40%;
-  margin-bottom: 1.5rem;
-}
-
-.calendar {
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.calendar-title {
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.calendar-controls {
-  display: flex;
-}
-
-.calendar-btn {
-  background: none;
-  border: none;
-  color: #1a73e8;
-  cursor: pointer;
-  margin-left: 0.5rem;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.25rem;
-}
-
-.calendar-day {
-  text-align: center;
-  padding: 0.5rem 0;
-  font-size: 0.85rem;
-}
-
-.calendar-date {
-  text-align: center;
-  padding: 0.5rem 0;
-  font-size: 0.85rem;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.calendar-date.today {
-  background-color: #1a73e8;
-  color: white;
-}
-
-.calendar-date.has-workout {
-  position: relative;
-}
-
-.calendar-date.has-workout::after {
-  content: "";
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: #40c057;
-}
-
-/* Content layout adjustment */
 .content-layout {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -0.5rem;
-  clear: right; /* Clear the float from calendar */
+  clear: right; 
 }
 
-/* Today's workout styles - Modified width */
 .todays-workout-container {
-  width: 60%; /* Shorter horizontally */
+  width: 60%; 
   padding: 0 0.5rem;
   margin-bottom: 1.5rem;
 }
 
-/* Section styles */
 section {
   margin-bottom: 2rem;
 }
@@ -274,7 +160,6 @@ section {
   margin-left: 0.25rem;
 }
 
-/* Card styles */
 .card {
   background-color: #fff;
   border-radius: 0.5rem;
@@ -283,7 +168,6 @@ section {
   min-height: 150px;
 }
 
-/* Weekly cards styles */
 .weekly-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -381,14 +265,14 @@ section {
 .exercise-list.visible {
   display: block;
 }
-/* Add workout button */
+
 .add-workout-btn {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
   width: 120px;
   height: 60px;
-  border-radius: 30px; /* Full height radius for oval shape */
+  border-radius: 30px; 
   background-color: #1a73e8;
   color: #fff;
   font-size: 1.2rem;
@@ -405,7 +289,6 @@ section {
   background-color: #1557b0;
 }
 
-/* Today's workout styles */
 .exercise-list-today {
   list-style: none;
 }
@@ -419,7 +302,6 @@ section {
   border-bottom: none;
 }
 
-/* Utility classes */
 .sm6-bg {
   background-color: #fff;
 }
@@ -441,7 +323,6 @@ section {
   fill: currentColor;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
   .dashboard-layout {
     flex-direction: column;
@@ -488,7 +369,7 @@ section {
   }
 }
 
-/* navegation bar */
+
 * {
   margin: 0;
   padding: 0;
@@ -502,14 +383,14 @@ body {
 }
 
 .sidebar {
-  width: 240px; /* Adjusted width for better visibility */
+  width: 240px; 
   min-height: 100vh;
   background-color: #fff;
   border-right: 1px solid #e4e9f0;
   z-index: 10;
   position: sticky;
   top: 0;
-  transition: width 0.3s ease; /* Smooth transition for collapsing */
+  transition: width 0.3s ease; 
 }
 
 .sidebar.collapsed {
@@ -682,9 +563,6 @@ body {
   overflow-y: auto;
 }
 
-/* Add this to your styles.css file */
-
-/* Complete workout button styling */
 .complete-workout-btn {
   margin-top: 15px;
   padding: 8px 16px;
@@ -707,7 +585,6 @@ body {
   cursor: default;
 }
 
-/* Exercise list for today's workout */
 .exercise-list-today {
   list-style-type: none;
   padding: 0;
@@ -723,14 +600,12 @@ body {
   border-bottom: none;
 }
 
-/* Workout title styling */
 .workout-title {
   margin-top: 0;
   color: #333;
   font-size: 18px;
 }
 
-/* Modal styling improvements */
 .modal {
   position: fixed;
   z-index: 1000;
@@ -762,4 +637,28 @@ body {
 
 .close:hover {
   color: #333;
+}
+
+#sidebar {
+  transition: all 0.3s ease;
+  width: 250px; 
+  overflow: hidden;
+}
+
+#sidebar.collapsed {
+  width: 60px; 
+}
+
+.hidden-content {
+  display: none;
+}
+
+#toggle-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 10px;
 }
