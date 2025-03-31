@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Index.css">
+    <title>Login Form</title>
+</head>
+<body>
+    <section id="logged-out-section">
+        <div class="login-container">
+            <h1>Welcome to MyFitnessDiary!</h1>
+            <form action="#" method="post">
+                <div class="form-group">
+                    <label for="username">Email</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button id="login-btn" type="submit" class="btn">Login</button>
+                <button id="sign-in-btn" type="submit" class="btn2">Create Account</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- <section id="logged-in-section">
+        <div class="welcome-container">
+            <h1>Welcome back, [User]!</h1>
+            <p>Here are your latest updates:</p>
+            <ul>
+                <li>Workout Summary</li>
+                <li>Nutrition Log</li>
+                <li>Progress Tracker</li>
+            </ul>
+            <button id="logout-btn" class="btn">Logout</button>
+        </div>
+    </section> -->
+
+    <script type="module" src="index.js"></script>
+
+</body>
+</html>

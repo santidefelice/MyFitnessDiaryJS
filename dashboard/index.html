@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitness Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Side menu -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="toggle-btn" id="toggle-btn">☰</button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="icon"></div>
+                        <span>Progress</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="icon"></div>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="icon"></div>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- Main content area -->
+        <div class="main-content">
+            <div class="container">
+                <header>
+                    <div class="header-left">
+                        <h1 class="header-title">My Fitness Diary</h1>
+                    </div>
+                    <div class="header-date">
+                        <span class="icon"></span>
+                        <span id="currentDate"></span>
+                    </div>
+                </header>
+                <main>
+                    <section id="todayWorkout">
+                        <div class="section-header">
+                            <h2 class="section-title">Today's Workout</h2>
+                            <span class="workout-time" id="workoutTime"></span>
+                        </div>
+                        <div class="card" id="todayWorkoutCard"></div>
+                    </section>
+                    <section id="weeklyPlan">
+                        <div class="section-header">
+                            <h2 class="section-title">This Week's Plan</h2>
+                        </div>
+                        <div class="weekly-cards" id="weeklyWorkoutsList"></div>
+                    </section>
+                    <button class="add-workout-btn" id="addWorkoutBtn">Workout Details</button>
+                </main>
+            </div>
+        </div>
+    </div>
+    <!--  modal for workout generator -->
+    <div id="workoutGeneratorModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <iframe id="workoutGeneratorFrame" src="/WorkoutCreation/workouts.html" style="width:100%; height:600px;" frameborder="0"></iframe>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById("addWorkoutBtn").addEventListener("click", function() {
+            document.getElementById("workoutGeneratorModal").style.display = "block";
+        });
+
+        document.getElementById("closeModal").addEventListener("click", function() {
+            document.getElementById("workoutGeneratorModal").style.display = "none";
+        });
+
+        // Close modal on clicking outside of it
+        window.onclick = function(event) {
+            let modal = document.getElementById("workoutGeneratorModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>
