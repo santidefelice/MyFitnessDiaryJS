@@ -378,14 +378,8 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
 
    document.getElementById("workoutOutput").innerHTML = workoutOutput;
 
-
-
-
    try {
-
-
        const auth = getAuth();
-
 
        const checkAuth = () => {
            return new Promise((resolve) => {
@@ -396,9 +390,7 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
            });
        };
 
-
        const user = await checkAuth();
-
 
        if (!user) {
            alert("You need to be logged in to generate and save a workout.");
@@ -407,13 +399,10 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
            return;
        }
 
-
        const uid = user.uid;
        const userDocId = localStorage.getItem('userDocId');
 
-
        const workoutText = workoutOutput.toString().replace(/<[^>]*>?/gm, '');
-
 
        const workoutDocRef = await addDoc(collection(db, "workouts"), {
            uid: uid,  // User's auth ID
@@ -432,7 +421,6 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
            createdAt: new Date()
        });
 
-
        if (userDocId) {
            try {
                const userRef = doc(db, "users", userDocId);
@@ -446,91 +434,7 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
            }
        }
 
-
-
-
        alert("Workout and calorie information saved successfully!");
-
-    const calorieInfo = calculateCalories(
-      age,
-      weight,
-      height,
-      gender,
-      skillLevel
-    )
-
-    workoutOutput += `<br><br><div class="calorie-info">`
-    workoutOutput += `<h3>Calorie Information</h3>`
-    workoutOutput += `<p>Based on your age (${age}), weight (${weight}kg), height (${height}cm), gender (${gender}) and activity level:</p>`
-    workoutOutput += `<ul>`
-    workoutOutput += `<li><strong>Maintenance Calories:</strong> ${calorieInfo.maintenance} calories/day</li>`
-    workoutOutput += `<li><strong>Bulking Calories:</strong> ${calorieInfo.bulking} calories/day</li>`
-    workoutOutput += `<li><strong>Cutting Calories:</strong> ${calorieInfo.cutting} calories/day</li>`
-    workoutOutput += `</ul></div>`
-
-    document.getElementById("workoutOutput").innerHTML = workoutOutput
-
-    try {
-      const auth = getAuth()
-
-      const checkAuth = () => {
-        return new Promise((resolve) => {
-          const unsubscribe = onAuthStateChanged(auth, (user) => {
-            unsubscribe() // Stop listening after first response
-            resolve(user)
-          })
-        })
-      }
-
-      const user = await checkAuth()
-
-      if (!user) {
-        alert("You need to be logged in to generate and save a workout.")
-        // Optionally redirect to login page
-        window.location.href = "/Login/index.html"
-        return
-      }
-
-      const uid = user.uid
-      const userDocId = localStorage.getItem("userDocId")
-
-      const workoutText = workoutOutput.toString().replace(/<[^>]*>?/gm, "")
-
-      const workoutDocRef = await addDoc(collection(db, "workouts"), {
-        uid: uid, // User's auth ID
-        userDocId: userDocId, // Reference to user document
-        skillLevel: skillLevel,
-        splitChoice: splitChoice,
-        exerciseType: exerciseType,
-        age: age,
-        weight: weight,
-        height: height,
-        gender: gender,
-        workoutPlan: workoutText,
-        maintenanceCalories: calorieInfo.maintenance,
-        bulkingCalories: calorieInfo.bulking,
-        cuttingCalories: calorieInfo.cutting,
-        createdAt: new Date(),
-      })
-
-      console.log(userDocId)
-
-      if (userDocId) {
-        try {
-          const userRef = doc(db, "users", userDocId)
-          await updateDoc(userRef, {
-            workouts: arrayUnion(workoutDocRef.id),
-          })
-          console.log("User document updated with workout reference")
-        } catch (updateError) {
-          console.error("Error updating user document:", updateError)
-          // This error shouldn't prevent the workout from being saved
-
-          return
-        }
-      }
-
-      alert("Workout and calorie information saved successfully!")
 
       // Parse exercises by workout type
       const exercisesByType = parseExercisesByType(workoutOutput);
@@ -573,20 +477,18 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
       }
 
       window.parent.postMessage(
-
         {
             type: "workoutGenerated",
             workout: todayWorkout,
             weeklyWorkout: weeklyWorkouts,
         },
         "*"
-
-      )
+      );
     } catch (error) {
-      console.error("Error saving workout: ", error)
-      alert("Failed to save workout. Please try again.")
+      console.error("Error saving workout: ", error);
+      alert("Failed to save workout. Please try again.");
     }
-  })
+  });
 
 // Parse exercises from workout HTML text by workout type
 function parseExercisesByType(workoutHtml) {
