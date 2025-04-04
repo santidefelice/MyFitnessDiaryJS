@@ -1,27 +1,18 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js"
-import {
-  collection,
-  addDoc,
-  getDocs,
-  getFirestore,
-  doc,
-  updateDoc,
-  arrayUnion,
-} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js"
-import {
-  getAuth,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import {collection, addDoc, getDocs, getFirestore, doc, updateDoc, arrayUnion} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
-  authDomain: "myfitnessdiary-98de3.firebaseapp.com",
-  databaseURL: "https://myfitnessdiary-98de3-default-rtdb.firebaseio.com",
-  projectId: "myfitnessdiary-98de3",
-  storageBucket: "myfitnessdiary-98de3.firebasestorage.app",
-  messagingSenderId: "654598300156",
-  appId: "1:654598300156:web:d185f121d6b680afcc1279",
-}
+ apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
+ authDomain: "myfitnessdiary-98de3.firebaseapp.com",
+ databaseURL: "https://myfitnessdiary-98de3-default-rtdb.firebaseio.com",
+ projectId: "myfitnessdiary-98de3",
+ storageBucket: "myfitnessdiary-98de3.firebasestorage.app",
+ messagingSenderId: "654598300156",
+ appId: "1:654598300156:web:d185f121d6b680afcc1279"
+};
+
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
@@ -68,6 +59,8 @@ async function addUser(
     console.error("Error adding document: ", e)
   }
 }
+
+
 
 const exercises = [
   { name: "Pullups", code: "11" },
@@ -172,6 +165,7 @@ const generateWorkout = (
   return workoutPlan
 }
 
+
 // Calorie calculation function based on user details
 const calculateCalories = (age, weight, height, gender, activityLevel) => {
   const heightInMeters = height / 100
@@ -214,187 +208,248 @@ const calculateCalories = (age, weight, height, gender, activityLevel) => {
   }
 }
 
-document
-  .getElementById("generateWorkoutBtn")
-  .addEventListener("click", async () => {
-    const skillLevel = parseInt(document.getElementById("skillLevel").value)
-    const splitChoice = parseInt(document.getElementById("splitChoice").value)
-    const exerciseType = parseInt(document.getElementById("exerciseType").value)
+document.getElementById("generateWorkoutBtn").addEventListener("click", async () => {
+   const skillLevel = parseInt(document.getElementById("skillLevel").value);
+   const splitChoice = parseInt(document.getElementById("splitChoice").value);
+   const exerciseType = parseInt(document.getElementById("exerciseType").value);
+  
+  
+   // Get user physical details
+   const age = parseInt(document.getElementById("age").value);
+   const weight = parseFloat(document.getElementById("weight").value);
+   const height = parseFloat(document.getElementById("height").value);
+   const gender = document.getElementById("gender").value;
+  
+   // Validate user inputs
+   if (isNaN(age) || isNaN(weight) || isNaN(height)) {
+       alert("Please enter valid age, weight, and height values");
+       return;
+   }
 
-    // Get user physical details
-    const age = parseInt(document.getElementById("age").value)
-    const weight = parseFloat(document.getElementById("weight").value)
-    const height = parseFloat(document.getElementById("height").value)
-    const gender = document.getElementById("gender").value
 
-    // Validate user inputs
-    if (isNaN(age) || isNaN(weight) || isNaN(height)) {
-      alert("Please enter valid age, weight, and height values")
-      return
-    }
+   let sets = 0, repsMin = 0, repsMax = 0, daysPerWeek = 0;
 
-    let sets = 0,
-      repsMin = 0,
-      repsMax = 0,
-      daysPerWeek = 0
 
-    switch (skillLevel) {
-      case 1:
-        sets = 3
-        repsMin = 8
-        repsMax = 12
-        daysPerWeek = 3
-        break
-      case 2:
-        sets = 4
-        repsMin = 10
-        repsMax = 15
-        daysPerWeek = 4
-        break
-      case 3:
-        sets = 4
-        repsMin = 8
-        repsMax = 15
-        daysPerWeek = 5
-        break
-      default:
-        alert("Invalid skill level")
-        return
-    }
+   switch (skillLevel) {
+       case 1:
+           sets = 3;
+           repsMin = 8;
+           repsMax = 12;
+           daysPerWeek = 3;
+           break;
+       case 2:
+           sets = 4;
+           repsMin = 10;
+           repsMax = 15;
+           daysPerWeek = 4;
+           break;
+       case 3:
+           sets = 4;
+           repsMin = 8;
+           repsMax = 15;
+           daysPerWeek = 5;
+           break;
+       default:
+           alert("Invalid skill level");
+           return;
+   }
 
-    let workoutOutput = `Workout days per week: ${daysPerWeek}<br><br>`
 
-    switch (splitChoice) {
-      case 1: // Pull, Push, Legs
-        workoutOutput += "<strong>PULL:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [1, 2],
-          skillLevel === 1 ? [2, 1] : skillLevel === 2 ? [3, 1] : [4, 2],
-          sets,
-          repsMin,
-          repsMax
-        )
+   let workoutOutput = `Workout days per week: ${daysPerWeek}<br><br>`;
+  
+   switch (splitChoice) {
+       case 1: // Pull, Push, Legs
+           workoutOutput += "<strong>PULL:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [1, 2],
+               skillLevel === 1 ? [2, 1] : skillLevel === 2 ? [3, 1] : [4, 2],
+               sets,
+               repsMin,
+               repsMax
+           );
+          
+           workoutOutput += "<br><strong>PUSH:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [3, 4, 5],
+               skillLevel === 1 ? [1, 1, 1] : skillLevel === 2 ? [2, 1, 1] : [3, 2, 2],
+               sets,
+               repsMin,
+               repsMax
+           );
+          
+           workoutOutput += "<br><strong>LEGS:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [6, 7, 8, 9],
+               skillLevel === 1 ? [1, 1, 1, 0] : skillLevel === 2 ? [1, 1, 1, 1] : [2, 1, 2, 1],
+               sets,
+               repsMin,
+               repsMax
+           );
+           break;
+          
+       case 2: // Upper, Lower
+           workoutOutput += "<strong>UPPER:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [1, 2, 3, 4, 5],
+               skillLevel === 1 ? [1, 0, 1, 0, 1] : skillLevel === 2 ? [1, 1, 1, 0, 1] : [2, 1, 1, 1, 1],
+               sets,
+               repsMin,
+               repsMax
+           );
+          
+           workoutOutput += "<br><strong>LOWER:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [6, 7, 8, 9],
+               skillLevel === 1 ? [1, 1, 1, 0] : skillLevel === 2 ? [1, 1, 1, 1] : [2, 2, 2, 1],
+               sets,
+               repsMin,
+               repsMax
+           );
+           break;
+          
+       case 3: // Torso, Arms, Legs
+           workoutOutput += "<strong>TORSO:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [1, 3],
+               skillLevel === 1 ? [1, 2] : skillLevel === 2 ? [2, 2] : [3, 3],
+               sets,
+               repsMin,
+               repsMax
+           );
+          
+           workoutOutput += "<br><strong>ARMS:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [2, 4, 5],
+               skillLevel === 1 ? [1, 1, 1] : skillLevel === 2 ? [1, 2, 1] : [2, 2, 2],
+               sets,
+               repsMin,
+               repsMax
+           );
+          
+           workoutOutput += "<br><strong>LEGS:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [6, 7, 8, 9],
+               skillLevel === 1 ? [1, 1, 1, 0] : skillLevel === 2 ? [1, 1, 1, 1] : [2, 2, 2, 1],
+               sets,
+               repsMin,
+               repsMax
+           );
+           break;
+          
+       case 4: // Full Body
+           workoutOutput += "<strong>FULL BODY:</strong><br>";
+           workoutOutput += generateWorkout(
+               exerciseType,
+               [1, 3, 5, 6, 7],
+               skillLevel === 1 ? [1, 1, 0, 1, 0] : skillLevel === 2 ? [1, 1, 0, 1, 1] : [1, 1, 1, 1, 1],
+               sets,
+               repsMin,
+               repsMax
+           );
+           break;
+          
+       default:
+           alert("Invalid split choice");
+           return;
+   }
 
-        workoutOutput += "<br><strong>PUSH:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [3, 4, 5],
-          skillLevel === 1
-            ? [1, 1, 1]
-            : skillLevel === 2
-            ? [2, 1, 1]
-            : [3, 2, 2],
-          sets,
-          repsMin,
-          repsMax
-        )
 
-        workoutOutput += "<br><strong>LEGS:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [6, 7, 8, 9],
-          skillLevel === 1
-            ? [1, 1, 1, 0]
-            : skillLevel === 2
-            ? [1, 1, 1, 1]
-            : [2, 1, 2, 1],
-          sets,
-          repsMin,
-          repsMax
-        )
-        break
+   // Calculate calorie needs based on user details and skill level
+   const calorieInfo = calculateCalories(age, weight, height, gender, skillLevel);
+  
+   // Calorie information to the output
+   workoutOutput += `<br><br><div class="calorie-info">`;
+   workoutOutput += `<h3>Calorie Information</h3>`;
+   workoutOutput += `<p>Based on your age (${age}), weight (${weight}kg), height (${height}cm), gender (${gender}) and activity level:</p>`;
+   workoutOutput += `<ul>`;
+   workoutOutput += `<li><strong>Maintenance Calories:</strong> ${calorieInfo.maintenance} calories/day</li>`;
+   workoutOutput += `<li><strong>Bulking Calories:</strong> ${calorieInfo.bulking} calories/day</li>`;
+   workoutOutput += `<li><strong>Cutting Calories:</strong> ${calorieInfo.cutting} calories/day</li>`;
+   workoutOutput += `</ul></div>`;
 
-      case 2: // Upper, Lower
-        workoutOutput += "<strong>UPPER:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [1, 2, 3, 4, 5],
-          skillLevel === 1
-            ? [1, 0, 1, 0, 1]
-            : skillLevel === 2
-            ? [1, 1, 1, 0, 1]
-            : [2, 1, 1, 1, 1],
-          sets,
-          repsMin,
-          repsMax
-        )
 
-        workoutOutput += "<br><strong>LOWER:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [6, 7, 8, 9],
-          skillLevel === 1
-            ? [1, 1, 1, 0]
-            : skillLevel === 2
-            ? [1, 1, 1, 1]
-            : [2, 2, 2, 1],
-          sets,
-          repsMin,
-          repsMax
-        )
-        break
+   document.getElementById("workoutOutput").innerHTML = workoutOutput;
 
-      case 3: // Torso, Arms, Legs
-        workoutOutput += "<strong>TORSO:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [1, 3],
-          skillLevel === 1 ? [1, 2] : skillLevel === 2 ? [2, 2] : [3, 3],
-          sets,
-          repsMin,
-          repsMax
-        )
 
-        workoutOutput += "<br><strong>ARMS:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [2, 4, 5],
-          skillLevel === 1
-            ? [1, 1, 1]
-            : skillLevel === 2
-            ? [1, 2, 1]
-            : [2, 2, 2],
-          sets,
-          repsMin,
-          repsMax
-        )
 
-        workoutOutput += "<br><strong>LEGS:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [6, 7, 8, 9],
-          skillLevel === 1
-            ? [1, 1, 1, 0]
-            : skillLevel === 2
-            ? [1, 1, 1, 1]
-            : [2, 2, 2, 1],
-          sets,
-          repsMin,
-          repsMax
-        )
-        break
 
-      case 4: // Full Body
-        workoutOutput += "<strong>FULL BODY:</strong><br>"
-        workoutOutput += generateWorkout(
-          exerciseType,
-          [1, 3, 5, 6, 7],
-          skillLevel === 1
-            ? [1, 1, 0, 1, 0]
-            : skillLevel === 2
-            ? [1, 1, 0, 1, 1]
-            : [1, 1, 1, 1, 1],
-          sets,
-          repsMin,
-          repsMax
-        )
-        break
+   try {
 
-      default:
-        alert("Invalid split choice")
-        return
-    }
+
+       const auth = getAuth();
+
+
+       const checkAuth = () => {
+           return new Promise((resolve) => {
+               const unsubscribe = onAuthStateChanged(auth, (user) => {
+                   unsubscribe(); // Stop listening after first response
+                   resolve(user);
+               });
+           });
+       };
+
+
+       const user = await checkAuth();
+
+
+       if (!user) {
+           alert("You need to be logged in to generate and save a workout.");
+           // Optionally redirect to login page
+           window.location.href = "/Login/index.html";
+           return;
+       }
+
+
+       const uid = user.uid;
+       const userDocId = localStorage.getItem('userDocId');
+
+
+       const workoutText = workoutOutput.toString().replace(/<[^>]*>?/gm, '');
+
+
+       const workoutDocRef = await addDoc(collection(db, "workouts"), {
+           uid: uid,  // User's auth ID
+           userDocId: userDocId, // Reference to user document
+           skillLevel: skillLevel,
+           splitChoice: splitChoice,
+           exerciseType: exerciseType,
+           age: age,
+           weight: weight,
+           height: height,
+           gender: gender,
+           workoutPlan: workoutText,
+           maintenanceCalories: calorieInfo.maintenance,
+           bulkingCalories: calorieInfo.bulking,
+           cuttingCalories: calorieInfo.cutting,
+           createdAt: new Date()
+       });
+
+
+       if (userDocId) {
+           try {
+               const userRef = doc(db, "users", userDocId);
+               await updateDoc(userRef, {
+                   workouts: arrayUnion(workoutDocRef.id)
+               });
+               console.log("User document updated with workout reference");
+           } catch (updateError) {
+               console.error("Error updating user document:", updateError);
+               // This error shouldn't prevent the workout from being saved
+           }
+       }
+
+
+
+
+       alert("Workout and calorie information saved successfully!");
 
     const calorieInfo = calculateCalories(
       age,
@@ -518,12 +573,14 @@ document
       }
 
       window.parent.postMessage(
+
         {
-          type: "workoutGenerated",
-          workout: todayWorkout,
-          weeklyWorkouts: weeklyWorkouts,
+            type: "workoutGenerated",
+            workout: todayWorkout,
+            weeklyWorkout: weeklyWorkouts,
         },
         "*"
+
       )
     } catch (error) {
       console.error("Error saving workout: ", error)
