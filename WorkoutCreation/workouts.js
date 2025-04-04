@@ -13,7 +13,6 @@ import {
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js"
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
   authDomain: "myfitnessdiary-98de3.firebaseapp.com",
@@ -24,7 +23,6 @@ const firebaseConfig = {
   appId: "1:654598300156:web:d185f121d6b680afcc1279",
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
@@ -158,12 +156,10 @@ const generateWorkout = (
           ex.code.charAt(0) == exerciseType && ex.code.charAt(1) == muscleGroup
       )
 
-      // Randomly select the specified number of exercises
       let selectedExercises = []
       if (filtered.length <= exerciseCount) {
         selectedExercises = filtered
       } else {
-        // Shuffle the array and take the first exerciseCount elements
         const shuffled = [...filtered].sort(() => 0.5 - Math.random())
         selectedExercises = shuffled.slice(0, exerciseCount)
       }
@@ -178,7 +174,6 @@ const generateWorkout = (
 
 // Calorie calculation function based on user details
 const calculateCalories = (age, weight, height, gender, activityLevel) => {
-  // Convert height from cm to meters for BMR calculation
   const heightInMeters = height / 100
 
   // Calculate BMR
@@ -401,7 +396,6 @@ document
         return
     }
 
-    // Calculate calorie needs based on user details and skill level
     const calorieInfo = calculateCalories(
       age,
       weight,
@@ -410,7 +404,6 @@ document
       skillLevel
     )
 
-    // Calorie information to the output
     workoutOutput += `<br><br><div class="calorie-info">`
     workoutOutput += `<h3>Calorie Information</h3>`
     workoutOutput += `<p>Based on your age (${age}), weight (${weight}kg), height (${height}cm), gender (${gender}) and activity level:</p>`
@@ -484,32 +477,46 @@ document
 
       alert("Workout and calorie information saved successfully!")
 
-      // Format workout data for the dashboard
-      const exercises = parseExercisesFromWorkoutText(workoutOutput)
-
-      // Create workout object for today
-      const todayWorkout = {
-        title: `${getWorkoutSplitName(splitChoice)} Workout`,
-        description: `${getSkillLevelName(skillLevel)} workout with ${
-          exercises.length
-        } exercises`,
-        exercises: exercises,
-        date: new Date().toISOString(),
-        completed: false,
-      }
-
-      // Create weekly workouts object if using a split routine
-      let weeklyWorkouts = null
-      if (splitChoice !== 4) {
-        // Not full body (which is option 4)
+      // Parse exercises by workout type
+      const exercisesByType = parseExercisesByType(workoutOutput);
+      
+      // Get today's day of the week
+      const today = new Date();
+      const dayIndex = today.getDay(); 
+      const dayName = getDayNames()[dayIndex];
+      
+      // Create weekly workouts object
+      let weeklyWorkouts = null;
+      if (splitChoice !== 4) { // Not full body
         weeklyWorkouts = createWeeklyWorkoutPlan(
           splitChoice,
           skillLevel,
-          exercises
-        )
+          exercisesByType
+        );
+      } else {
+        const allExercises = Object.values(exercisesByType).flat();
+        weeklyWorkouts = createFullBodyWeeklyPlan(
+          skillLevel,
+          allExercises
+        );
+      }
+      
+      // Set today's workout based on the weekly plan
+      let todayWorkout;
+      if (weeklyWorkouts && weeklyWorkouts[dayName]) {
+        todayWorkout = weeklyWorkouts[dayName];
+      } else {
+        // Fallback if no workout is planned for today
+        const allExercises = Object.values(exercisesByType).flat();
+        todayWorkout = {
+          title: `${getWorkoutSplitName(splitChoice)} Workout`,
+          description: `${getSkillLevelName(skillLevel)} workout with ${allExercises.length} exercises`,
+          exercises: allExercises,
+          date: new Date().toISOString(),
+          completed: false,
+        };
       }
 
-      // Send workout data to parent window (dashboard)
       window.parent.postMessage(
         {
           type: "workoutGenerated",
@@ -518,11 +525,246 @@ document
         },
         "*"
       )
-
-      // Don't redirect, let the dashboard handle closing the modal
-      // window.location.href = "/dashboard"
     } catch (error) {
       console.error("Error saving workout: ", error)
       alert("Failed to save workout. Please try again.")
     }
   })
+
+// Parse exercises from workout HTML text by workout type
+function parseExercisesByType(workoutHtml) {
+  const exercisesByType = {
+    Pull: [],
+    Push: [],
+    Legs: [],
+    Upper: [],
+    Lower: [],
+    Torso: [],
+    Arms: [],
+    FullBody: []
+  };
+  
+  // Split the HTML by workout type headers
+  const sections = workoutHtml.split(/<strong>([^<]+):<\/strong><br>/);
+  
+  let currentType = null;
+  for (let i = 0; i < sections.length; i++) {
+    if (i % 2 === 1) { // This is a header
+      currentType = sections[i].trim();
+    } else if (i > 0 && currentType) { // This is content after a header
+      const content = sections[i];
+      const regex = /([^<>-]+) - (\d+) sets of (\d+)-(\d+) reps/g;
+      let match;
+      
+      while ((match = regex.exec(content)) !== null) {
+        const exercise = {
+          name: match[1].trim(),
+          sets: parseInt(match[2]),
+          repsMin: parseInt(match[3]),
+          repsMax: parseInt(match[4]),
+        };
+        
+        // Map the section header to our exercise type keys
+        if (currentType === "PULL") exercisesByType.Pull.push(exercise);
+        else if (currentType === "PUSH") exercisesByType.Push.push(exercise);
+        else if (currentType === "LEGS") exercisesByType.Legs.push(exercise);
+        else if (currentType === "UPPER") exercisesByType.Upper.push(exercise);
+        else if (currentType === "LOWER") exercisesByType.Lower.push(exercise);
+        else if (currentType === "TORSO") exercisesByType.Torso.push(exercise);
+        else if (currentType === "ARMS") exercisesByType.Arms.push(exercise);
+        else if (currentType === "FULL BODY") exercisesByType.FullBody.push(exercise);
+      }
+    }
+  }
+  
+  return exercisesByType;
+}
+
+// Parse all exercises from workout HTML text (for backward compatibility)
+function parseExercisesFromWorkoutText(workoutHtml) {
+  const exercises = [];
+  const regex = /([^<>-]+) - (\d+) sets of (\d+)-(\d+) reps/g;
+  let match;
+
+  while ((match = regex.exec(workoutHtml)) !== null) {
+    exercises.push({
+      name: match[1].trim(),
+      sets: parseInt(match[2]),
+      repsMin: parseInt(match[3]),
+      repsMax: parseInt(match[4]),
+    });
+  }
+
+  return exercises;
+}
+
+// Get workout split name based on the split choice
+function getWorkoutSplitName(splitChoice) {
+  switch (splitChoice) {
+    case 1:
+      return "Pull/Push/Legs"
+    case 2:
+      return "Upper/Lower"
+    case 3:
+      return "Torso/Arms/Legs"
+    case 4:
+      return "Full Body"
+    default:
+      return "Custom"
+  }
+}
+
+// Get skill level name based on the level
+function getSkillLevelName(skillLevel) {
+  switch (skillLevel) {
+    case 1:
+      return "Beginner"
+    case 2:
+      return "Intermediate"
+    case 3:
+      return "Advanced"
+    default:
+      return "Custom"
+  }
+}
+
+// Create weekly workout plan with proper distribution of workouts and rest days
+function createWeeklyWorkoutPlan(splitChoice, skillLevel, exercisesByType) {
+  const days = getDayNames();
+  const weeklyWorkouts = {};
+  const daysPerWeek = skillLevel === 1 ? 3 : skillLevel === 2 ? 4 : 5;
+  
+  let workoutTypes = [];
+  switch (splitChoice) {
+    case 1: 
+      workoutTypes = ["Pull", "Push", "Legs"];
+      break;
+    case 2: 
+      workoutTypes = ["Upper", "Lower"];
+      break;
+    case 3: 
+      workoutTypes = ["Torso", "Arms", "Legs"];
+      break;
+    default:
+      workoutTypes = ["FullBody"];
+  }
+  
+
+  const workoutDayIndices = getWorkoutDayIndices(daysPerWeek, workoutTypes.length);
+  
+  // Initialize all days as rest days first
+  for (let i = 0; i < days.length; i++) {
+    weeklyWorkouts[days[i]] = {
+      title: "Rest Day",
+      description: "Recovery day - no planned workout",
+      exercises: [],
+      date: new Date().toISOString(),
+      completed: false,
+    };
+  }
+  
+  // Assign workouts to workout days
+  let typeIndex = 0;
+  for (const dayIndex of workoutDayIndices) {
+    const day = days[dayIndex];
+    const workoutType = workoutTypes[typeIndex % workoutTypes.length];
+    typeIndex++;
+    
+    // Get exercises for this workout type
+    const exercisesForDay = exercisesByType[workoutType] || [];
+    
+    weeklyWorkouts[day] = {
+      title: `${workoutType} Day`,
+      description: `${getSkillLevelName(skillLevel)} ${workoutType} workout`,
+      exercises: exercisesForDay,
+      date: new Date().toISOString(),
+      completed: false,
+    };
+  }
+  
+  return weeklyWorkouts;
+}
+
+// Create a full body weekly plan
+function createFullBodyWeeklyPlan(skillLevel, exercises) {
+  const days = getDayNames();
+  const weeklyWorkouts = {};
+  const daysPerWeek = skillLevel === 1 ? 3 : skillLevel === 2 ? 4 : 5;
+  
+  // Determine workout days for full body
+  const workoutDayIndices = getWorkoutDayIndices(daysPerWeek, 1);
+  
+  // Initialize all days as rest days first
+  for (let i = 0; i < days.length; i++) {
+    weeklyWorkouts[days[i]] = {
+      title: "Rest Day",
+      description: "Recovery day - no planned workout",
+      exercises: [],
+      date: new Date().toISOString(),
+      completed: false,
+    };
+  }
+  
+  // Assign full body workouts to workout days
+  for (const dayIndex of workoutDayIndices) {
+    const day = days[dayIndex];
+    
+    weeklyWorkouts[day] = {
+      title: "Full Body Day",
+      description: `${getSkillLevelName(skillLevel)} Full Body workout`,
+      exercises: exercises,
+      date: new Date().toISOString(),
+      completed: false,
+    };
+  }
+  
+  return weeklyWorkouts;
+}
+
+// Helper function to determine which days of the week should be workout days
+function getWorkoutDayIndices(daysPerWeek, splitLength) {
+  // Start from Monday (index 1) for most workout plans
+  const indices = [];
+  
+  switch (daysPerWeek) {
+    case 3:
+      if (splitLength === 3) {
+        // Mon, Wed, Fri for 3-day splits
+        indices.push(1, 3, 5);
+      } else {
+        // Mon, Wed, Fri for other splits with 3 days
+        indices.push(1, 3, 5);
+      }
+      break;
+    case 4:
+      if (splitLength === 2) {
+        // Mon, Tue, Thu, Fri for Upper/Lower
+        indices.push(1, 2, 4, 5);
+      } else {
+        // Mon, Tue, Thu, Fri for other splits with 4 days
+        indices.push(1, 2, 4, 5);
+      }
+      break;
+    case 5:
+      // Mon through Fri for 5-day splits
+      indices.push(1, 2, 3, 4, 5);
+      break;
+    default:
+      // Default to Mon, Wed, Fri
+      indices.push(1, 3, 5);
+  }
+  
+  return indices;
+}
+
+function getDayNames() {
+  return [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ]
+}
