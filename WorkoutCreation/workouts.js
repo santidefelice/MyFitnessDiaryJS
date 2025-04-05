@@ -480,7 +480,7 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
         {
             type: "workoutGenerated",
             workout: todayWorkout,
-            weeklyWorkout: weeklyWorkouts,
+            weeklyWorkouts: weeklyWorkouts,
         },
         "*"
       );
