@@ -273,7 +273,7 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", async ()
            workoutOutput += generateWorkout(
                exerciseType,
                [3, 4, 5],
-               skillLevel === 1 ? [1, 1, 1] : skillLevel === 2 ? [2, 1, 1] : [3, 2, 2],
+               skillLevel === 1 ? [1, 1, 1] : skillLevel === 2 ? [2, 1, 1] : [2, 2, 2],
                sets,
                repsMin,
                repsMax
