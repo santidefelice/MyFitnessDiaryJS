@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-import {getAuth} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+import {getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+ 
 
 
 const firebaseConfig = {
@@ -15,9 +17,61 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app);
+const user = auth.currentUser;
+
+const usernameEL = document.getElementById("user-name");
+const emailEL = document.getElementById("email");
+const signOutBtnEL = document.getElementById("logout-btn");
+const createdAtEL = document.getElementById("created-at");
+
+
+signOutBtnEL.addEventListener("click", authSignOut)
 
 
 
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        showUserInfo(usernameEL, user);
+    } else {
+        console.log("Not Authenticated");
+    }
+})
+
+function authSignOut() {
+  signOut(auth).then(() => {
+    localStorage.clear();
+    window.location.href = "/Login/index.html";
+  }).catch((error) => {
+    console.error("Sign out error:", error);
+  });
+}
+
+
+function showUserInfo(element, user) {
+  if (user.email) {
+    // Extract everything before the @ symbol
+    const username = user.email.split('@')[0];
+    element.textContent = username;
+  }
+  else{
+    element.textContent = "Guest";
+  }
+
+  if (user.email) {
+    emailEL.textContent = user.email;
+  }
+  else{
+    emailEL.textContent = "No email found";
+  }
+
+  if (user.metadata.creationTime) {
+    const createdAt = new Date(user.metadata.creationTime);
+    createdAtEL.textContent = "You've been a member since " + createdAt.toLocaleDateString() +"!";
+  } else {
+    createdAtEL.textContent = "No creation date found";
+  }
+}
 
 function setupSidebarToggle() {
     const sidebar = document.getElementById("sidebar");

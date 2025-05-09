@@ -3,7 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
     setupSidebarToggle();
     populateExercises();
     setupEventListeners();
+    setupModalInitalState();
   });
+
+  function setupModalInitalState(){
+    const modal = document.getElementById('exerciseModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
   
   function updateCurrentDate() {
     const currentDateElement = document.getElementById("currentDate");
@@ -46,70 +54,70 @@ document.addEventListener("DOMContentLoaded", function () {
   // Exercise data
   const exercises = [
     { name: "Pullups", code: "11" },
-    { name: "Inverted Rows", code: "11" },
-    { name: "Pelican Curls", code: "12" },
-    { name: "Ring Curls", code: "12" },
+    { name: "Inverted-Rows", code: "11" },
+    { name: "Pelican-Curls", code: "12" },
+    { name: "Ring-Curls", code: "12" },
     { name: "Dips", code: "13" },
     { name: "Pushups", code: "13" },
-    { name: "Ring Flys", code: "13" },
-    { name: "Bodyweight Skullcrushers", code: "14" },
-    { name: "Diamond Pushups", code: "14" },
-    { name: "Pike Pushups", code: "15" },
-    { name: "Face Pulls", code: "11" },
-    { name: "Pistol Squat", code: "16" },
-    { name: "Sissy Squat", code: "16" },
+    { name: "Ring-Flys", code: "13" },
+    { name: "Bodyweight-Skullcrushers", code: "14" },
+    { name: "Diamond-Pushups", code: "14" },
+    { name: "Pike-Pushups", code: "15" },
+    { name: "Face-Pulls", code: "11" },
+    { name: "Pistol-Squat", code: "16" },
+    { name: "Sissy-Squat", code: "16" },
     { name: "Nordics", code: "17" },
-    { name: "Split Squat", code: "18" },
-    { name: "Glute Bridges", code: "18" },
-    { name: "Bodyweight Calf Raises", code: "19" },
+    { name: "Split-Squat", code: "18" },
+    { name: "Glute-Bridges", code: "18" },
+    { name: "Bodyweight-Calf-Raises", code: "19" },
     // machines
-    { name: "T-Bar Rows", code: "21" },
-    { name: "Lat Pulldowns", code: "21" },
-    { name: "Cable Rows", code: "21" },
-    { name: "Lat Prayers", code: "21" },
-    { name: "Face Away Cable Curls", code: "22" },
-    { name: "Preacher Curl Machine", code: "22" },
-    { name: "Standing Cable Curls", code: "22" },
-    { name: "Pec Deck Flys", code: "23" },
-    { name: "Vertical Chest Press", code: "23" },
-    { name: "Cable Tricep Pushdowns", code: "24" },
-    { name: "Cable Overhead Extensions", code: "24" },
-    { name: "Cable Lateral Raises", code: "25" },
-    { name: "Machine Overhead Press", code: "25" },
-    { name: "Cable Face Pulls", code: "21" },
-    { name: "Leg Press", code: "26" },
-    { name: "Hack Squat", code: "26" },
-    { name: "Leg Extensions", code: "26" },
-    { name: "Leg Curls", code: "27" },
-    { name: "Hip Thrust Machine", code: "28" },
-    { name: "Machine Calf Raises", code: "29" },
+    { name: "T-Bar-Rows", code: "21" },
+    { name: "Lat-Pulldowns", code: "21" },
+    { name: "Cable-Rows", code: "21" },
+    { name: "Lat-Prayers", code: "21" },
+    { name: "Face-Away-Cable-Curls", code: "22" },
+    { name: "Preacher-Curl-Machine", code: "22" },
+    { name: "Standing-Cable-Curls", code: "22" },
+    { name: "Pec-Deck-Flys", code: "23" },
+    { name: "Vertical-Chest-Press", code: "23" },
+    { name: "Cable-Tricep-Pushdowns", code: "24" },
+    { name: "Cable-Overhead-Extensions", code: "24" },
+    { name: "Cable-Lateral-Raises", code: "25" },
+    { name: "Machine-Overhead-Press", code: "25" },
+    { name: "Cable-Face-Pulls", code: "21" },
+    { name: "Leg-Press", code: "26" },
+    { name: "Hack-Squat", code: "26" },
+    { name: "Leg-Extensions", code: "26" },
+    { name: "Leg-Curls", code: "27" },
+    { name: "Hip-Thrust-Machine", code: "28" },
+    { name: "Machine-Calf-Raises", code: "29" },
     // free weights
-    { name: "Bent Over Barbell Rows", code: "31" },
-    { name: "Bench Assisted Single Arm Rows", code: "31" },
-    { name: "Dumbbell Pullovers", code: "31" },
-    { name: "Incline Dumbbell Curls", code: "32" },
-    { name: "Preacher Bar Curls", code: "32" },
-    { name: "Standing Barbell Curls", code: "32" },
-    { name: "Hammer Curls", code: "32" },
-    { name: "Reverse Grip Curls", code: "32" },
-    { name: "Incline Dumbbell Press", code: "33" },
-    { name: "Dumbbell Flys", code: "33" },
-    { name: "Flat Bench Press", code: "33" },
-    { name: "Close Grip Bench Press", code: "33" },
+    { name: "Bent-Over-Barbell-Rows", code: "31" },
+    { name: "Bench-Assisted-Single-Arm-Rows", code: "31" },
+    { name: "Dumbbell-Pullovers", code: "31" },
+    { name: "Incline-Dumbbell-Curls", code: "32" },
+    { name: "Preacher-Bar-Curls", code: "32" },
+    { name: "Standing-Barbell-Curls", code: "32" },
+    { name: "Hammer-Curls", code: "32" },
+    { name: "Reverse-Grip-Curls", code: "32" },
+    { name: "Incline-Dumbbell-Press", code: "33" },
+    { name: "Dumbbell-Flys", code: "33" },
+    { name: "Flat-Bench-Press", code: "33" },
+    { name: "Close-Grip-Bench-Press", code: "33" },
     { name: "Skullcrushers", code: "34" },
-    { name: "Overhead Tricep Extensions", code: "34" },
-    { name: "Lateral Raises", code: "35" },
-    { name: "Overhead Press", code: "35" },
-    { name: "Reverse Dumbbell Fly", code: "31" },
-    { name: "Front Raise", code: "35" },
-    { name: "Front Squat", code: "36" },
-    { name: "Back Squat", code: "36" },
-    { name: "Goblet Squat", code: "36" },
-    { name: "Romanian Deadlifts", code: "37" },
+    { name: "Overhead-Tricep-Extensions", code: "34" },
+    { name: "Lateral-Raises", code: "35" },
+    { name: "Overhead-Press", code: "35" },
+    { name: "Reverse-Dumbbell-Fly", code: "31" },
+    { name: "Front-Raise", code: "35" },
+    { name: "Front-Squat", code: "36" },
+    { name: "Back-Squat", code: "36" },
+    { name: "Goblet-Squat", code: "36" },
+    { name: "Romanian-Deadlifts", code: "37" },
     { name: "Deadlift", code: "37" },
-    { name: "Bulgarian Split Squat", code: "38" },
-    { name: "Walking Lunges", code: "38" },
-    { name: "Dumbbell Calf Raises", code: "39" },
+    { name: "Bulgarian-Split-Squat", code: "38" },
+    { name: "Walking-Lunges", code: "38" },
+    { name: "Dumbbell-Calf-Raises", code: "39" },
   ];
   
   function populateExercises() {
@@ -174,8 +182,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const nameElement = document.getElementById('exerciseDetailName');
     const typeElement = document.getElementById('exerciseDetailType');
     const muscleElement = document.getElementById('exerciseDetailMuscle');
+    const GifElement = document.getElementById('exerciseDetailGif');
+    const gifPath = `/Gifs/${exercise.name.replace(/\s+/g, '-')}.gif`; //local file path to the gifs
     
-    if (modal && nameElement && typeElement && muscleElement) {
+    if (modal && nameElement && typeElement && muscleElement && GifElement) {
       nameElement.textContent = exercise.name;
       
       // Determine exercise type and muscle group from code
@@ -206,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       
       typeElement.textContent = `Type: ${type}`;
       muscleElement.textContent = `Muscle Group: ${muscle}`;
+      GifElement.src = gifPath;
       
       modal.style.display = 'flex';
     }

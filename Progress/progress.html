@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Fitness Diary - Progress</title>
     <link rel="stylesheet" href="progress.css">
+    <link rel="icon" type="image/x-icon" href="images/MFDLogo1.png">
 </head>
 <body>
     <div class="container">
@@ -47,7 +48,7 @@
                     </li>
                 
                     <li class="sidenav__item">
-                        <a href="account.html" class="sidenav__link">
+                        <a href="/Account/Account.html" class="sidenav__link">
                             <span style="margin-left: 67px;" id="sidenav-txt" class="sidenav__text">Account</span>
                         </a>
                     </li>
@@ -55,10 +56,18 @@
             </nav>
         </div>
         
-        <header>
-            <h1>My Fitness Diary</h1>
-            <p class="date">Sunday, March 30, 2025</p>
-        </header>
+        <div class="container">
+            <header>
+              <div class="header-left">
+                </button>
+                <h1 class="header-title">My Fitness Diary</h1>
+              </div>
+              <div class="header-right">
+                <div class="header-date" id="currentDate">
+                </div>
+              </div>
+            </header>
+        </div>
 
         <section class="progress-container">
             <div class="progress-section">
@@ -145,7 +154,7 @@
                                 <span class="goal">225</span>
                             </div>
                         </div>
-                        <p class="progress-label">One Plate to Two Plate</p>
+                        <p class="progress-label"></p>
                     </div>
                     <div class="card strength-card">
                         <h3>Squat</h3>
@@ -157,7 +166,7 @@
                                 <span class="goal">315</span>
                             </div>
                         </div>
-                        <p class="progress-label">Two Plate to Three Plate</p>
+                        <p class="progress-label"></p>
                     </div>
                     <div class="card strength-card">
                         <h3>Deadlift</h3>
@@ -169,7 +178,7 @@
                                 <span class="goal">405</span>
                             </div>
                         </div>
-                        <p class="progress-label">Progress to Four Plate</p>
+                        <p class="progress-label"></p>
                     </div>
                 </div>
                 
@@ -259,6 +268,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="progress.js"></script>
+    <script type="module" src="progress.js"></script>
 </body>
 </html>

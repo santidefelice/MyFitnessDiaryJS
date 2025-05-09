@@ -139,10 +139,29 @@
   
   /* Adjust main content to accommodate sidebar */
   header, .progress-container {
-    margin-left: 220px;
+    margin-left: 120px;
     transition: margin-left 0.3s ease;
-    padding: 20px;
+    padding: 80px;
   }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem; 
+    background-color: #1a73e8; 
+    padding: 1rem 1.5rem;
+    color: white;
+    border-radius: 0.5rem;
+  }
+
+  .header-date {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9); 
+  }
+
   
   /* Adjust main content when sidebar is collapsed */
   .sidebar.collapsed ~ header,

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="Account.css">
+    <link rel="icon" type="image/x-icon" href="images/MFDLogo1.png">
     <title>MFD | Account</title>
 </head>
 <body>
@@ -25,13 +26,13 @@
                 </li>
             
                 <li class="sidenav__item">
-                    <a href="workouts.html" class="sidenav__link">
+                    <a href="/list/list.html" class="sidenav__link">
                         <span id="sidenav-txt" class="sidenav__text">Workouts</span>
                     </a>
                 </li>
             
                 <li class="sidenav__item sidenav__item--expanded">
-                    <a href="progress.html" class="sidenav__link">
+                    <a href="/Progress/progress.html" class="sidenav__link">
                         <span id="sidenav-txt" class="sidenav__text">Progress</span>
                     </a>
                 </li>
@@ -60,104 +61,26 @@
         <h1>Account Settings</h1>
         
         <div class="account-panel">
-            <div class="sidebar">
-                <button id="btn-profile" class="active">Profile</button>
-                <button id="btn-billing">Billing</button>
-                <button id="btn-security">Security</button>
-                <button id="btn-notifications">Notifications</button>
-            </div>
-            
             <div class="content">
                 <!-- Profile Tab -->
                 <div id="profile-tab" class="tab-content active">
                     <h2>Profile Information</h2>
                     <div class="profile-info">
-                        <div class="avatar">J</div>
+                        <!-- <div class="avatar"></div> -->
                         <div class="user-details">
-                            <p>Jane Smith</p>
-                            <p>jane.smith@example.com</p>
+                            <p id="user-name"></p>
+                            <p id="email"></p>
                         </div>
                     </div>
                     
                     <div class="section">
                         <h3>Account Details</h3>
-                        <p>Member since: April 2, 2023</p>
-                        <button class="btn">Edit Profile</button>
-                    </div>
-                </div>
-                
-                <!-- Billing Tab -->
-                <div id="billing-tab" class="tab-content">
-                    <h2>Billing Information</h2>
-                    
-                    <div class="section">
-                        <h3>Current Plan</h3>
-                        <p>Premium</p>
-                        <p>Next billing date: May 10, 2025</p>
-                        <button class="btn">Change Plan</button>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>Payment Method</h3>
-                        <p>Visa ending in 4242</p>
-                        <p>Expires 05/2026</p>
-                        <button class="btn">Add Payment Method</button>
-                    </div>
-                </div>
-                
-                <!-- Security Tab -->
-                <div id="security-tab" class="tab-content">
-                    <h2>Security Settings</h2>
-                    
-                    <div class="section">
-                        <h3>Password</h3>
-                        <p>Last changed 3 months ago</p>
-                        <button class="btn">Change Password</button>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>Two-Factor Authentication</h3>
-                        <div class="toggle-row">
-                            <p>Enable two-factor authentication</p>
-                            <label class="toggle">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Notifications Tab -->
-                <div id="notifications-tab" class="tab-content">
-                    <h2>Notification Preferences</h2>
-                    
-                    <div class="section">
-                        <div class="toggle-row">
-                            <p>Email Notifications</p>
-                            <label class="toggle">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="toggle-row">
-                            <p>Push Notifications</p>
-                            <label class="toggle">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="toggle-row">
-                            <p>Marketing Emails</p>
-                            <label class="toggle">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                        <p id="created-at"></p>
+                        <button id="logout-btn" class="logout-btn">Log Out</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type="module" src="account.js"></script>
+    
+<script type="module" src="account.js"></script>

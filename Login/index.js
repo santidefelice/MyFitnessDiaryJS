@@ -42,7 +42,7 @@ signInBtnEL.addEventListener("click", function(e) {
         .then((userCredential) => {
             clearAuthFields();
             // Navigate to the new page after successful account creation
-            window.location.href= "/WorkoutCreation/workouts.html";
+            window.location.href= "/dashboard/index.html";
             const userID = userCredential.user.uid;
 
             return addDoc(collection(db, "users"), {

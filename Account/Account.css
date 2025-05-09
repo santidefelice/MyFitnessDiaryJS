@@ -120,6 +120,7 @@ h1 {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .avatar {
@@ -146,7 +147,7 @@ h1 {
 
 .section {
     margin-bottom: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
 
@@ -159,9 +160,9 @@ h1 {
     color: #333;
 }
 
-button.btn {
+button.logout-btn {
     padding: 8px 16px;
-    background: #1890ff;
+    background: red;
     color: white;
     border: none;
     border-radius: 4px;
@@ -169,7 +170,7 @@ button.btn {
     margin-top: 10px;
 }
 
-button.btn:hover {
+button.logout-btn:hover {
     background: #40a9ff;
 }
 
