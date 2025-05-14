@@ -63,7 +63,6 @@ signInBtnEL.addEventListener("click", function(e) {
         })
         .catch((error) => {
             console.error(error.message);
-            // You might want to show an error message here instead of navigating
         });
 
         
@@ -84,7 +83,7 @@ loginBtnEL.addEventListener("click", function(e) {
         })
         .catch((error) => {
             console.error(error.message);
-            // You might want to show an error message here instead of navigating
+            showMessage("Invalid email or password, try again", true);
         });
 });
 signOutBtnEL.addEventListener("click", authLogout);
@@ -120,6 +119,21 @@ onAuthStateChanged(auth, (user) => {
          console.error("Error adding document: ", e);
      }
  }
+
+ function showMessage(message, isError = false) {
+    const messageElement = document.createElement('div');
+    messageElement.className = isError ? 'error-message' : 'save-message';
+    messageElement.textContent = message;
+  
+    document.body.appendChild(messageElement);
+  
+    setTimeout(() => {
+      messageElement.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(messageElement);
+      }, 500);
+    }, 3000);
+  }
 
 function authSignInWithEmail(e) {
     e.preventDefault()
