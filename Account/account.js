@@ -40,7 +40,7 @@ onAuthStateChanged(auth, (user) => {
 
 function authSignOut() {
   signOut(auth).then(() => {
-    localStorage.clear();
+    //localStorage.clear();
     window.location.href = "/Login/index.html";
   }).catch((error) => {
     console.error("Sign out error:", error);

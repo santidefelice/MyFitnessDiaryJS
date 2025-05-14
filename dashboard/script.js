@@ -1,13 +1,207 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+import { getFirestore, addDoc, collection, doc, getDoc, setDoc} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCGvypWds4wB21gXvYF5z9CAedYYBF-qPM",
+  authDomain: "myfitnessdiary-98de3.firebaseapp.com",
+  databaseURL: "https://myfitnessdiary-98de3-default-rtdb.firebaseio.com",
+  projectId: "myfitnessdiary-98de3",
+  storageBucket: "myfitnessdiary-98de3.firebasestorage.app",
+  messagingSenderId: "654598300156",
+  appId: "1:654598300156:web:d185f121d6b680afcc1279"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Current user
+let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   updateCurrentDate()
   initializeWeeklyLayout()
-  loadSavedWorkouts()
   setupEventListeners()
   setupSidebarToggle()
   listenForWorkoutMessages()
-  checkTodayWorkout()
+  
+  // Initialize authentication listener
+  initializeAuth()
 })
+
+function initializeAuth() {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("User signed in:", user.uid)
+      currentUser = user
+      
+      // Load user's workout data from Firebase
+      loadWorkoutsFromFirebase(user)
+    } else {
+      console.log("No user signed in. User must log in to use the app.")
+      currentUser = null
+      
+      // Display message to prompt user to sign in
+      showSignInMessage()
+    }
+  })
+}
+
+// Display a message prompting user to sign in
+function showSignInMessage() {
+  const todayWorkoutCard = document.getElementById("todayWorkoutCard")
+  if (todayWorkoutCard) {
+    todayWorkoutCard.innerHTML = `
+      <h3 class="workout-title">Sign In Required</h3>
+      <p>Please sign in to view and save your workouts.</p>
+      <button id="signInBtn" class="sign-in-btn">Sign In</button>
+    `
+    
+    const signInBtn = document.getElementById("signInBtn")
+    if (signInBtn) {
+      signInBtn.addEventListener("click", function() {
+        // Implement your sign-in logic here
+        alert("Please implement sign-in functionality")
+      })
+    }
+  }
+  
+  // Also update weekly workouts view
+  const weeklyWorkoutsList = document.getElementById("weeklyWorkoutsList")
+  if (weeklyWorkoutsList) {
+    const workoutCards = weeklyWorkoutsList.querySelectorAll('.workout-card')
+    workoutCards.forEach(card => {
+      const cardBody = card.querySelector('.workout-card-body')
+      if (cardBody) {
+        const titleElement = cardBody.querySelector('.workout-title')
+        if (titleElement) {
+          titleElement.textContent = "Sign In Required"
+        }
+        
+        const descriptionElement = cardBody.querySelector('.workout-description')
+        if (descriptionElement) {
+          descriptionElement.textContent = "Please sign in to view workouts"
+        }
+      }
+    })
+  }
+}
+
+// Firebase Data Operations
+async function loadWorkoutsFromFirebase(user) {
+  try {
+    const userDocRef = doc(db, "workouts", user.uid)
+    const userDoc = await getDoc(userDocRef)
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data()
+      
+      // Load today's workout if it exists
+      if (userData.todayWorkout) {
+        const workoutData = userData.todayWorkout
+        
+        // Check if the workout is from today
+        const workoutDate = new Date(workoutData.date)
+        const today = new Date()
+        
+        if (isSameDay(workoutDate, today)) {
+          updateTodayWorkout(workoutData)
+          updateWeeklyWorkout(workoutData)
+        } else {
+          displayNoWorkoutMessage()
+        }
+      } else {
+        displayNoWorkoutMessage()
+      }
+      
+      // Load weekly workouts if they exist
+      if (userData.weeklyWorkouts) {
+        const weeklyWorkouts = userData.weeklyWorkouts
+        
+        // Update UI with the weekly workouts
+        Object.keys(weeklyWorkouts).forEach((day) => {
+          updateDayWorkout(day, weeklyWorkouts[day])
+        })
+      }
+      
+      console.log("Successfully loaded workouts from Firebase")
+    } else {
+      // No existing data for this user, initialize their document
+      await setDoc(userDocRef, {
+        createdAt: new Date().toISOString(),
+        weeklyWorkouts: {},
+      })
+      console.log("Created new user document in Firebase")
+      displayNoWorkoutMessage()
+    }
+  } catch (error) {
+    console.error("Error loading workouts from Firebase:", error)
+    showMessage("Failed to load workouts from server.", true)
+    displayNoWorkoutMessage()
+  }
+}
+
+function displayNoWorkoutMessage() {
+  const todayWorkoutCard = document.getElementById("todayWorkoutCard")
+  if (todayWorkoutCard) {
+    todayWorkoutCard.innerHTML = `
+      <h3 class="workout-title">No Workout Planned</h3>
+      <p>Click the "Add Workout" button to generate a workout for today.</p>
+    `
+  }
+}
+
+function saveToFirebase(dataType, data) {
+  if (!currentUser) {
+    console.log("No user signed in. Cannot save data.")
+    showMessage("Please sign in to save your workout.", true)
+    return Promise.reject(new Error("No user signed in"))
+  }
+  
+  const userDocRef = doc(db, "workouts", currentUser.uid)
+  const dataToSave = { [dataType]: data }
+  
+  return setDoc(userDocRef, dataToSave, { merge: true })
+    .then(() => {
+      console.log(`${dataType} saved to Firebase successfully`)
+      showMessage("Workout saved successfully!", false)
+      return true
+    })
+    .catch((error) => {
+      console.error(`Error saving ${dataType} to Firebase:`, error)
+      showMessage("Error saving workout. Please try again.", true)
+      throw error
+    })
+}
+
+// Utility function for showing messages
+function showMessage(message, isError = false) {
+  // Create a floating message element if it doesn't exist
+  let messageElement = document.getElementById("floating-message")
+  
+  if (!messageElement) {
+    messageElement = document.createElement("div")
+    messageElement.id = "floating-message"
+    document.body.appendChild(messageElement)
+  }
+  
+  // Set class based on message type
+  messageElement.className = isError ? "error-message" : "success-message"
+  messageElement.textContent = message
+  messageElement.style.display = "block"
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    messageElement.style.opacity = "0"
+    setTimeout(() => {
+      messageElement.style.display = "none"
+      messageElement.style.opacity = "1"
+    }, 500)
+  }, 3000)
+}
 
 function updateCurrentDate() {
   const currentDateElement = document.getElementById("currentDate")
@@ -109,52 +303,6 @@ function createWorkoutCard(day, index) {
   return workoutCard
 }
 
-function loadSavedWorkouts() {
-  const savedTodayWorkout = localStorage.getItem("todayWorkout")
-  if (savedTodayWorkout) {
-    try {
-      const workoutData = JSON.parse(savedTodayWorkout)
-
-      if (!workoutData.date) {
-        workoutData.date = new Date().toISOString()
-        localStorage.setItem("todayWorkout", JSON.stringify(workoutData))
-      }
-
-      const workoutDate = new Date(workoutData.date)
-      const today = new Date()
-
-      if (isSameDay(workoutDate, today)) {
-        updateTodayWorkout(workoutData)
-        updateWeeklyWorkout(workoutData)
-      } else {
-        console.log(
-          "Saved workout is not from today, not displaying it as today's workout"
-        )
-      }
-    } catch (error) {
-      console.error("Error loading saved today's workout:", error)
-    }
-  } else {
-    console.log("No saved workout found for today")
-  }
-
-  const savedWeeklyWorkouts = localStorage.getItem("weeklyWorkouts")
-  if (savedWeeklyWorkouts) {
-    try {
-      const weeklyData = JSON.parse(savedWeeklyWorkouts)
-
-      Object.keys(weeklyData).forEach((day) => {
-        const workoutData = weeklyData[day]
-        updateDayWorkout(day, workoutData)
-      })
-    } catch (error) {
-      console.error("Error loading saved weekly workouts:", error)
-    }
-  } else {
-    console.log("No saved weekly workouts found")
-  }
-}
-
 function isSameDay(date1, date2) {
   return (
     date1.getFullYear() === date2.getFullYear() &&
@@ -185,6 +333,11 @@ function setupEventListeners() {
   const addWorkoutBtn = document.getElementById("addWorkoutBtn")
   if (addWorkoutBtn) {
     addWorkoutBtn.addEventListener("click", function () {
+      if (!currentUser) {
+        showMessage("Please sign in to add workouts", true)
+        return
+      }
+      
       const modal = document.getElementById("workoutGeneratorModal")
       if (modal) {
         modal.style.display = "flex"
@@ -245,6 +398,12 @@ function setupSidebarToggle() {
 function listenForWorkoutMessages() {
   window.addEventListener("message", function (event) {
     if (event.data && event.data.type === "workoutGenerated") {
+      // Check if user is logged in
+      if (!currentUser) {
+        showMessage("Please sign in to save your workout", true)
+        return
+      }
+      
       const workoutData = event.data.workout
       const weeklyWorkouts = event.data.weeklyWorkouts
 
@@ -283,7 +442,16 @@ function listenForWorkoutMessages() {
 }
 
 function saveWeeklyWorkouts(weeklyWorkouts) {
-  localStorage.setItem("weeklyWorkouts", JSON.stringify(weeklyWorkouts))
+  if (!currentUser) {
+    showMessage("Please sign in to save your workouts", true)
+    return
+  }
+  
+  // Save to Firebase
+  saveToFirebase('weeklyWorkouts', weeklyWorkouts)
+    .catch(error => {
+      console.error("Error saving weekly workouts:", error)
+    })
 }
 
 function updateTodayWorkout(workoutData) {
@@ -344,6 +512,11 @@ function updateTodayWorkout(workoutData) {
     completeBtn.classList.add("completed")
   } else {
     completeBtn.addEventListener("click", function () {
+      if (!currentUser) {
+        showMessage("Please sign in to mark workouts as completed", true)
+        return
+      }
+      
       workoutData.completed = true
 
       saveWorkoutData(workoutData)
@@ -450,6 +623,11 @@ function updateDayWorkout(dayName, workoutData) {
 }
 
 function updateWeeklyWorkoutStatus() {
+  if (!currentUser) {
+    showMessage("Please sign in to update workout status", true)
+    return
+  }
+  
   const today = new Date()
   const dayIndex = today.getDay()
   const dayName = getDayNames()[dayIndex]
@@ -465,79 +643,119 @@ function updateWeeklyWorkoutStatus() {
     if (statusElement) {
       statusElement.classList.add("completed")
 
-      const savedWeeklyWorkouts = localStorage.getItem("weeklyWorkouts")
-      if (savedWeeklyWorkouts) {
-        try {
-          const weeklyData = JSON.parse(savedWeeklyWorkouts)
-          if (weeklyData[dayName]) {
-            weeklyData[dayName].completed = true
-            localStorage.setItem("weeklyWorkouts", JSON.stringify(weeklyData))
+      // Get the latest data from Firebase
+      const userDocRef = doc(db, "workouts", currentUser.uid)
+      getDoc(userDocRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data()
+            if (userData.weeklyWorkouts && userData.weeklyWorkouts[dayName]) {
+              // Update the data
+              const updatedWeeklyWorkouts = {
+                ...userData.weeklyWorkouts
+              }
+              updatedWeeklyWorkouts[dayName].completed = true
+              
+              // Save the updated data back to Firebase
+              saveToFirebase('weeklyWorkouts', updatedWeeklyWorkouts)
+            }
           }
-        } catch (error) {
+        })
+        .catch((error) => {
           console.error("Error updating weekly workout status:", error)
-        }
-      }
+          showMessage("Failed to update workout status", true)
+        })
     }
   }
 }
 
 function saveWorkoutData(workoutData) {
+  if (!currentUser) {
+    showMessage("Please sign in to save workout data", true)
+    return
+  }
+  
   if (!workoutData.date) {
     workoutData.date = new Date().toISOString()
   }
 
-  localStorage.setItem("todayWorkout", JSON.stringify(workoutData))
+  // Save today's workout to Firebase
+  saveToFirebase('todayWorkout', workoutData)
+    .then(() => {
+      // After saving today's workout, update the weekly workouts
+      const today = new Date()
+      const dayIndex = today.getDay()
+      const dayName = getDayNames()[dayIndex]
+      
+      // Get the current weekly workouts from Firebase
+      const userDocRef = doc(db, "workouts", currentUser.uid)
+      return getDoc(userDocRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data()
+            const weeklyWorkouts = userData.weeklyWorkouts || {}
+            
+            // Update the current day's workout
+            weeklyWorkouts[dayName] = workoutData
+            
+            // Save the updated weekly workouts
+            return saveToFirebase('weeklyWorkouts', weeklyWorkouts)
+          } else {
+            // If no document exists yet, create a new weekly workouts object
+            const weeklyWorkouts = {
+              [dayName]: workoutData
+            }
+            return saveToFirebase('weeklyWorkouts', weeklyWorkouts)
+          }
+        })
+    })
+    .catch((error) => {
+      console.error("Error saving workout data:", error)
+      showMessage("Failed to save workout data", true)
+    })
 
-  const today = new Date()
-  const dayIndex = today.getDay()
-  const dayName = getDayNames()[dayIndex]
-
-  let weeklyWorkouts = {}
-  const savedWeeklyWorkouts = localStorage.getItem("weeklyWorkouts")
-  if (savedWeeklyWorkouts) {
-    try {
-      weeklyWorkouts = JSON.parse(savedWeeklyWorkouts)
-    } catch (error) {
-      console.error("Error parsing saved weekly workouts:", error)
-    }
-  }
-
-  weeklyWorkouts[dayName] = workoutData
-
-  localStorage.setItem("weeklyWorkouts", JSON.stringify(weeklyWorkouts))
-
-  console.log("Workout data saved successfully")
+  console.log("Workout data save initiated")
 }
 
-function checkTodayWorkout() {
-  const todayWorkoutCard = document.getElementById("todayWorkoutCard")
-  if (!todayWorkoutCard) return
-
-  const savedTodayWorkout = localStorage.getItem("todayWorkout")
-  if (!savedTodayWorkout) {
-    todayWorkoutCard.innerHTML = `
-      <h3 class="workout-title">No Workout Planned</h3>
-      <p>Click the "Add Workout" button to generate a workout for today.</p>
-    `
-    return
-  }
-
-  try {
-    const workoutData = JSON.parse(savedTodayWorkout)
-    const workoutDate = new Date(workoutData.date || new Date())
-    const today = new Date()
-
-    if (!isSameDay(workoutDate, today)) {
-      todayWorkoutCard.innerHTML = `
-        <h3 class="workout-title">No Workout Planned</h3>
-        <p>Click the "Add Workout" button to generate a workout for today.</p>
-      `
+// Add some CSS for the floating message
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    #floating-message {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      transition: opacity 0.5s ease;
     }
-  } catch (error) {
-    console.error("Error checking today's workout:", error)
-    todayWorkoutCard.innerHTML = `
-      <h3 class="workout-title">Error Loading Workout</h3>
-      <p>There was a problem loading your workout. Please try generating a new one.</p>
-    `
-  }
-}
+    
+    .success-message {
+      background-color: #4caf50;
+      color: white;
+    }
+    
+    .error-message {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    .sign-in-btn {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .sign-in-btn:hover {
+      background-color: #0b7dda;
+    }
+  </style>
+`);
