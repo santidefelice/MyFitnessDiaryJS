@@ -904,6 +904,19 @@ function initModalHandlers() {
     if (button) {
       button.addEventListener('click', function() {
         document.getElementById(`${type}-edit-modal`).style.display = 'block';
+
+        if(type === 'strength') {
+          initExerciseSelect();
+          renderStrengthGoalsEdit();
+        }
+        else if(type === 'weight') {
+          initWeightGoalsEdit();
+        }
+        else if(type === 'volume') {
+          initVolumeTargetsEdit();
+        }
+          
+
       });
     }
   });

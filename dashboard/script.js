@@ -149,7 +149,7 @@ function displayNoWorkoutMessage() {
   if (todayWorkoutCard) {
     todayWorkoutCard.innerHTML = `
       <h3 class="workout-title">No Workout Planned</h3>
-      <p>Click the "Add Workout" button to generate a workout for today.</p>
+      <p>Click the "Edit" button to generate a workout plan!.</p>
     `
   }
 }
