@@ -64,7 +64,7 @@ function showSignInMessage() {
     if (signInBtn) {
       signInBtn.addEventListener("click", function() {
         // Implement your sign-in logic here
-        alert("Please implement sign-in functionality")
+        window.location.href = "/Login/Index.html"
       })
     }
   }
