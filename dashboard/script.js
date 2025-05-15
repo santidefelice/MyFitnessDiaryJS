@@ -99,20 +99,50 @@ async function loadWorkoutsFromFirebase(user) {
     if (userDoc.exists()) {
       const userData = userDoc.data()
       
+      // Get the current day
+      const today = new Date()
+      const dayIndex = today.getDay()
+      const dayName = getDayNames()[dayIndex]
+      
       // Load today's workout if it exists
       if (userData.todayWorkout) {
         const workoutData = userData.todayWorkout
         
         // Check if the workout is from today
         const workoutDate = new Date(workoutData.date)
-        const today = new Date()
         
         if (isSameDay(workoutDate, today)) {
           updateTodayWorkout(workoutData)
           updateWeeklyWorkout(workoutData)
         } else {
-          displayNoWorkoutMessage()
+          // Not from today - check if we have a workout for today in weekly workouts
+          if (userData.weeklyWorkouts && userData.weeklyWorkouts[dayName]) {
+            const todaysScheduledWorkout = userData.weeklyWorkouts[dayName]
+            
+            // Update date to today
+            todaysScheduledWorkout.date = today.toISOString()
+            
+            // Use this as today's workout
+            updateTodayWorkout(todaysScheduledWorkout)
+            
+            // Also save it as today's workout
+            saveToFirebase('todayWorkout', todaysScheduledWorkout)
+          } else {
+            displayNoWorkoutMessage()
+          }
         }
+      } else if (userData.weeklyWorkouts && userData.weeklyWorkouts[dayName]) {
+        // No today workout, but we have a weekly workout for today
+        const todaysScheduledWorkout = userData.weeklyWorkouts[dayName]
+        
+        // Update date to today
+        todaysScheduledWorkout.date = today.toISOString()
+        
+        // Use this as today's workout
+        updateTodayWorkout(todaysScheduledWorkout)
+        
+        // Also save it as today's workout
+        saveToFirebase('todayWorkout', todaysScheduledWorkout)
       } else {
         displayNoWorkoutMessage()
       }
