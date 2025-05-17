@@ -15,36 +15,52 @@
 
     html, body {
         height: 100%;
-        overflow: hidden;
+        overflow-x: hidden;
     }
 
     body {
         display: flex;
+        background-color: #fff;
     }
 
     .main-content {
         flex: 1;
         display: flex;
         height: 100%; 
-        overflow: hidden; 
+        width: 100%;
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
     }
 
     .landing-page {
         display: flex;
+        flex-direction: row;
         width: 100%;
         height: 100%; 
         background-color: #fff;
-        overflow: hidden; 
     }
 
     .left-section {
         flex: 1.5;
-        padding: 60px;
+        padding: 40px;
         display: flex;
         flex-direction: column;
         height: 100%; 
+        background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1));
+        position: relative;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1)); 
+    }
+
+    .left-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+        transform: translateX(-100%);
+        animation: shimmer 3s infinite;
     }
 
     .right-section {
@@ -53,10 +69,14 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 60px 40px;
-        height: 100%; 
-        overflow: hidden;
+        padding: 40px;
+        height: auto; 
+        min-height: 50%;
         position: relative;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        transform: translateX(50px);
+        opacity: 0;
+        animation: slideIn 0.8s ease-out 0.3s forwards;
     }
 
     .right-section-content {
@@ -65,17 +85,23 @@
     }
 
     h1 {
-        font-size: 48px;
+        font-size: 2.5rem;
         margin-bottom: 20px;
         color: #333;
         font-weight: 600;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 0.8s ease-out 0.2s forwards;
     }
 
     p {
         color: #666;
-        font-size: 16px;
+        font-size: 1rem;
         line-height: 1.6;
         margin-bottom: 30px;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 0.8s ease-out 0.4s forwards;
     }
 
     .cta-button {
@@ -87,10 +113,32 @@
         text-decoration: none;
         font-size: 14px;
         transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 0.8s ease-out 0.6s forwards, pulse 2s infinite 1.5s;
     }
 
     .cta-button:hover {
         background-color: #2980b9;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1) translate(-50%, -50%);
+        animation: ripple 1.5s ease-out infinite;
     }
 
     .featured-image {
@@ -100,6 +148,9 @@
         overflow: hidden;
         margin-top: 40px;
         max-height: 75%;
+        opacity: 0;
+        transform: scale(0.95);
+        animation: fadeScale 1s ease-out 0.5s forwards;
     }
 
     .featured-image img {
@@ -107,6 +158,13 @@
         height: auto;
         object-fit: cover;
         max-height: 100%;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: transform 0.6s ease;
+    }
+
+    .featured-image:hover img {
+        transform: scale(1.03);
     }
 
     /* Animation styles */
@@ -120,6 +178,8 @@
         right: -40px;
         z-index: 1;
         animation: float 2s ease-in-out infinite;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        opacity: 0;
     }
 
     .animated-element:nth-child(1) {
@@ -127,7 +187,7 @@
         height: 80px;
         top: 30%;
         right: 100px;
-        animation: float-pulse 8s ease-in-out infinite;
+        animation: float-pulse 8s ease-in-out infinite, fadeIn 0.5s ease-out 0.8s forwards;
     }
 
     .animated-element:nth-child(2) {
@@ -136,8 +196,8 @@
         top: 60%;
         right: 200px;
         background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1));
-        animation: float-circular 6s ease-in-out infinite;
-        animation-delay: 2s;
+        animation: float-circular 6s ease-in-out infinite, fadeIn 0.5s ease-out 1s forwards;
+        animation-delay: 2s, 1s;
     }
 
     .animated-element:nth-child(3) {
@@ -146,8 +206,8 @@
         top: 20%;
         right: 400px;
         background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1));
-        animation: float 8s ease-in-out infinite;
-        animation-delay: 4s;
+        animation: float 8s ease-in-out infinite, fadeIn 0.5s ease-out 1.2s forwards;
+        animation-delay: 4s, 1.2s;
     }
 
     .animated-element:nth-child(4) {
@@ -156,8 +216,8 @@
         top: 20%;
         right: 200px;
         background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1));
-        animation: float 4s ease-in-out infinite;
-        animation-delay: 4s;
+        animation: float 4s ease-in-out infinite, fadeIn 0.5s ease-out 1.4s forwards;
+        animation-delay: 4s, 1.4s;
     }
 
     .animated-element:nth-child(5) {
@@ -166,12 +226,47 @@
         top: 20%;
         right: 200px;
         background: linear-gradient(135deg, rgba(9, 120, 193, 0.81), rgba(139, 161, 176, 0.1)); 
-        animation: float 4s ease-in-out infinite;
-        animation-delay: 4s;
+        animation: float 4s ease-in-out infinite, fadeIn 0.5s ease-out 1.6s forwards;
+        animation-delay: 4s, 1.6s;
     }
 
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
 
+    @keyframes slideIn {
+        from { 
+            transform: translateX(50px);
+            opacity: 0;
+        }
+        to { 
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
 
+    @keyframes fadeUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeScale {
+        from { 
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to { 
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 
     @keyframes float {
         0% {
@@ -199,7 +294,180 @@
       100% { transform: scale(1) translateY(0); }
     }
 
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+      50% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
+      100% { transform: scale(1); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+    }
+
+    @keyframes ripple {
+      0% { 
+        transform: scale(1) translate(-50%, -50%);
+        opacity: 0.4;
+      }
+      100% { 
+        transform: scale(20) translate(-50%, -50%); 
+        opacity: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Media Queries for Responsive Design */
+    @media screen and (max-width: 1024px) {
+        .left-section, .right-section {
+            padding: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+        }
+        
+        /* Keep two animated elements for tablets, but make them smaller */
+        .animated-element:nth-child(3),
+        .animated-element:nth-child(4),
+        .animated-element:nth-child(5) {
+            display: none;
+        }
+        
+        .animated-element:nth-child(1),
+        .animated-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+        }
+    }
     
+    @media screen and (max-width: 768px) {
+        html, body {
+            overflow-y: auto;
+        }
+        
+        .landing-page {
+            flex-direction: column;
+            height: auto;
+        }
+        
+        .left-section, .right-section {
+            flex: none;
+            width: 100%;
+            padding: 30px 20px;
+        }
+        
+        .left-section {
+            height: auto;
+            min-height: 400px;
+        }
+        
+        .right-section {
+            transform: translateX(0);
+            animation: fadeIn 0.8s ease-out 0.8s forwards;
+            opacity: 0;
+            min-height: auto;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+        
+        /* Reposition animated elements for mobile */
+        .animated-element:nth-child(1) {
+            right: 20px;
+            top: 10%;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .animated-element:nth-child(2) {
+            right: 60px;
+            top: 80%;
+            width: 70px;
+            height: 70px;
+        }
+        
+        .featured-image {
+            margin-top: 20px;
+            max-height: 300px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+        }
+        
+        p {
+            text-align: center;
+        }
+        
+        .right-section-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .left-section, .right-section {
+            padding: 20px 15px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta-button {
+            width: 100%;
+            padding: 10px 20px;
+        }
+        
+        .featured-image {
+            max-height: 200px;
+        }
+        
+        /* Adjust animated elements for very small screens */
+        .animated-element:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            right: 10px;
+        }
+        
+        .animated-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            right: 40px;
+        }
+        
+        /* Simplify animations for better performance on mobile */
+        .left-section::before {
+            animation: none;
+        }
+    }
+    
+    /* Fix for some mobile browsers */
+    @media screen and (max-height: 500px) and (orientation: landscape) {
+        .landing-page {
+            flex-direction: row;
+        }
+        
+        .left-section, .right-section {
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        .featured-image {
+            max-height: 150px;
+        }
+    }
     </style>
 </head>
 <body>
@@ -208,7 +476,7 @@
             <div class="left-section">
                 <h1>Your Journey Starts Now</h1>
                 <div class="featured-image">
-                    <img src="images/GymPhoto.jpeg" alt="Inside of a Gym" style="width: 100%; height: auto;">
+                    <img src="images/GymPhoto.jpeg" alt="Inside of a Gym">
                 </div>
             </div>
             <div class="right-section">
@@ -218,7 +486,6 @@
                 <div class="animated-element"></div>
                 <div class="animated-element"></div>
                 <div class="animated-element"></div>
-                
                 
                 <div class="right-section-content">
                     <p>My Fitness Diary is a comprehensive application designed to help users track their fitness journey, monitor their daily workouts, and achieve their health and fitness goals.</p>
