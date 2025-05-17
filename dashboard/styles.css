@@ -35,6 +35,7 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: none;
 }
 
 .sidenav__item {
@@ -59,6 +60,31 @@ body {
 .sidenav__item--expanded .sidenav__link {
   color: #1a73e8;
   background-color: rgba(26, 115, 232, 0.05);
+}
+
+#sidebar.collapsed .sidenav__icon {
+  display: none;
+}
+
+/* Since we're hiding the icons, we should also adjust spacing */
+#sidebar.collapsed .sidenav__link {
+  padding: 0.5rem 0;
+  height: 40px; /* Give a consistent height */
+  justify-content: center;
+}
+
+/* Make sure the text is still visible (or adjust as needed) */
+#sidebar.collapsed .sidenav__text {
+  margin-top: 0;
+}
+
+/* Hide both icons and text when sidebar is collapsed */
+#sidebar.collapsed .sidenav__icon {
+  display: none;
+}
+
+#sidebar.collapsed .sidenav__text {
+  display: none;
 }
 
 .sidenav__icon {
@@ -662,3 +688,295 @@ body {
   cursor: pointer;
   margin: 10px;
 }
+
+/* Responsive Media Queries */
+
+/* Base mobile adjustments for all screen sizes */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  width: 100%;
+  min-height: auto;
+  position: relative;
+  border-right: none;
+  border-bottom: 1px solid #e4e9f0;
+}
+
+.sidenav {
+  padding: 0.5rem;
+}
+
+.sidenav__list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.sidenav__item {
+  margin: 0 0.25rem;
+}
+
+.sidenav__link {
+  padding: 0.5rem;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.container {
+  padding: 1rem;
+}
+
+header {
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.header-left, .header-right {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.content-layout {
+  flex-direction: column;
+}
+
+.todays-workout-container {
+  width: 100%;
+  padding: 0;
+}
+
+.weekly-cards {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.card {
+  padding: 1rem;
+  min-height: auto;
+}
+
+.workout-card-header {
+  padding: 0.75rem;
+}
+
+.workout-card-body {
+  padding: 0.75rem;
+}
+
+.add-workout-btn {
+  bottom: 1rem;
+  right: 1rem;
+  width: 100px;
+  height: 50px;
+  font-size: 1rem;
+}
+
+.modal-content {
+  width: 95%;
+  max-width: none;
+  margin: 5% auto;
+  padding: 1rem;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  .header {
+    flex-direction: row;
+  }
+  
+  .header-left, .header-right {
+    width: auto;
+    margin-bottom: 0;
+  }
+  
+  .weekly-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .dashboard-layout {
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    width: 90px;
+    min-height: 100vh;
+    border-right: 1px solid #e4e9f0;
+    border-bottom: none;
+    position: sticky;
+    top: 0;
+  }
+  
+  .sidenav__list {
+    display: block;
+  }
+  
+  .sidenav__item {
+    margin-bottom: 0.5rem;
+  }
+  
+  .weekly-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .todays-workout-container {
+    width: 100%;
+  }
+  
+  .container {
+    padding: 1.5rem;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .weekly-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .todays-workout-container {
+    width: 60%;
+  }
+  
+  header {
+    flex-direction: row;
+  }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .weekly-cards {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* Toggle button adjustments */
+#toggle-btn {
+  display: block;
+  margin: 0.5rem auto;
+}
+
+@media (min-width: 768px) {
+  #toggle-btn {
+    margin: 0.5rem;
+  }
+}
+
+/* Fix sidebar toggle functionality for mobile */
+#sidebar.collapsed {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  #sidebar.collapsed {
+    width: 60px;
+  }
+}
+
+/* Add this to your existing CSS file (styles.css) */
+
+/* Reset sidebar behavior */
+#sidebar {
+  transition: all 0.3s ease;
+  width: 250px;
+  min-height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  height: 100%;
+}
+
+#sidebar.collapsed {
+  width: 60px;
+}
+
+/* Adjust main content to work with fixed sidebar */
+.main-content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  width: calc(100% - 250px);
+}
+
+body.sidebar-collapsed .main-content {
+  margin-left: 60px;
+  width: calc(100% - 60px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  #sidebar {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid #e4e9f0;
+  }
+  
+  #sidebar.collapsed {
+    width: 100%;
+    height: 60px;
+    overflow: hidden;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  body.sidebar-collapsed .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  /* For mobile, show navigation differently */
+  .sidenav__list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  #sidebar:not(.collapsed) .sidenav__list {
+    flex-direction: column;
+  }
+  
+  /* Fix toggle button position on mobile */
+  #toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 101;
+  }
+}
+
+/* Tablet and Desktop adjustments */
+@media (min-width: 768px) {
+  .dashboard-layout {
+    flex-direction: row;
+  }
+  
+  #sidebar {
+    position: fixed;
+  }
+  
+  .sidenav__list {
+    display: block;
+  }
+  
+  .sidenav__item {
+    margin-bottom: 0.5rem;
+  }
+}
+

@@ -48,7 +48,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    border-bottom: 1px solid #e4e9f0;
+    
   }
   
   .toggle-btn:hover {
@@ -79,7 +79,7 @@
   .sidenav__link {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
+    padding: 12px 12px;
     color: #5a6474;
     text-decoration: none;
     transition: all 0.2s;
@@ -629,4 +629,279 @@ input[type="color"] {
         text-align: left;
         margin-top: 5px;
     }
+}
+
+/* Mobile-only responsive styles for Progress page */
+
+/* These styles only apply to mobile screens, preserving desktop view */
+@media (max-width: 767px) {
+    /* Sidebar mobile adjustments */
+    #sidebar {
+      width: 100%;
+      height: auto;
+      min-height: auto;
+      position: relative;
+      border-right: none;
+      border-bottom: 1px solid #e4e9f0;
+    }
+    
+    #sidebar.collapsed {
+      width: 100%;
+      height: 60px;
+      overflow: hidden;
+    }
+    
+    /* Mobile layout adjustments */
+    .progress-container {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 15px;
+    }
+    
+    /* Header adjustments for mobile */
+    header {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    /* For mobile, show navigation differently */
+    .sidenav__list {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    
+    #sidebar:not(.collapsed) .sidenav__list {
+      flex-direction: column;
+    }
+    
+    /* Fix toggle button position on mobile */
+    #toggle-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 101;
+    }
+    
+    /* In mobile collapsed state, we'll show only icons */
+    #sidebar.collapsed .sidenav__text {
+      display: none;
+    }
+    
+    /* Stack goal info cards vertically on mobile */
+    .goal-info {
+      flex-direction: column;
+    }
+    
+    .goal-info > div {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px 5px;
+    }
+    
+    /* Stack strength cards vertically on mobile */
+    .strength-goals {
+      flex-direction: column;
+    }
+    
+    .strength-card {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    /* Adjust chart size for mobile */
+    .chart-container {
+      height: 250px;
+    }
+    
+    /* Mobile modal improvements */
+    .modal-content {
+      width: 95%;
+      padding: 15px;
+      margin: 10% auto;
+      max-height: 80vh;
+    }
+    
+    /* Larger form elements for better touch interaction */
+    .form-group input,
+    .form-group select {
+      font-size: 16px; /* Prevents zoom on focus in iOS */
+      padding: 10px;
+      height: 44px;
+    }
+    
+    /* Vertical stacking for edit rows */
+    .goal-edit-row, 
+    .volume-input-row {
+      flex-direction: column;
+    }
+    
+    .goal-edit-name,
+    .goal-edit-input,
+    .goal-delete {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    
+    /* Ensure delete button is full width for easy tapping */
+    .delete-btn {
+      width: 100%;
+    }
+    
+    /* Progress circle size adjustment */
+    .progress-circle-container {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+  }
+
+/* Styles for mobile-only sidebar icons */
+
+/* Hide mobile icons on desktop */
+.mobile-only-icon {
+    display: none;
+  }
+  
+  /* Mobile sidebar adjustments */
+  @media (max-width: 767px) {
+    /* Show mobile icons only on mobile */
+    .mobile-only-icon {
+      display: block;
+      width: 24px;
+      height: 24px;
+      margin: 0 auto 4px;
+    }
+    
+    /* Reset text positioning on mobile */
+    #sidenav-txt {
+      margin-left: 0 !important;
+      text-align: center;
+    }
+    
+    /* Different layout for mobile navigation */
+    .sidenav__link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px 5px;
+    }
+    
+    /* When sidebar is collapsed in mobile, hide text */
+    #sidebar.collapsed .sidenav__text {
+      display: none;
+    }
+    
+    /* Mobile sidebar styling */
+    #sidebar:not(.collapsed) {
+      padding-top: 30px;
+    }
+    
+    /* Toggle button positioning */
+    #toggle-btn {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  }
+
+  /* Mobile-specific modal improvements */
+
+@media (max-width: 767px) {
+    /* Improve modal usability on mobile */
+    .edit-modal .modal-content {
+      width: 95%;
+      max-width: 95%;
+      margin: 5% auto;
+      padding: 20px 15px;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+    
+    /* Better close button for touch */
+    .close-modal {
+      font-size: 28px;
+      top: 10px;
+      right: 15px;
+      padding: 5px 10px;
+      z-index: 10;
+    }
+    
+    /* Improve form controls for touch */
+    .edit-modal .form-group {
+      margin-bottom: 18px;
+    }
+    
+    .edit-modal .form-group label {
+      font-size: 15px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .edit-modal .form-group input,
+    .edit-modal .form-group select {
+      font-size: 16px;
+      padding: 10px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      width: 100%;
+    }
+    
+    /* Larger buttons for touch */
+    .edit-modal .btn {
+      height: 44px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    
+    /* Better layout for edit rows on mobile */
+    .goal-edit-row {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+    }
+    
+    /* Make all inputs on edit modals easier to tap */
+    .edit-modal input[type="number"],
+    .edit-modal input[type="text"],
+    .edit-modal input[type="color"],
+    .edit-modal select {
+      min-height: 44px;
+    }
+    
+    /* Improve color input specifically */
+    .edit-modal input[type="color"] {
+      min-width: 44px;
+      padding: 2px;
+    }
+    
+    /* Better spacing for monthly weight selector */
+    #month-select {
+      margin-bottom: 15px;
+    }
+    
+    /* Make weight goal cards more readable on mobile */
+    .goal-info > div {
+      padding: 12px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  }
+
+  /* Hide icons when sidebar is collapsed on mobile */
+@media (max-width: 767px) {
+  #sidebar.collapsed .mobile-only-icon {
+    display: none;
+  }
+  
 }

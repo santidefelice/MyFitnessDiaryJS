@@ -30,25 +30,96 @@ document.addEventListener("DOMContentLoaded", function () {
   function setupSidebarToggle() {
     const sidebar = document.getElementById("sidebar");
     const toggleBtn = document.getElementById("toggle-btn");
+    const body = document.body;
     const sidebarContent = document.querySelector(".sidebar-content");
-  
-    if (sidebar) {
-      sidebar.classList.add("collapsed");
-  
+    const isMobile = () => window.innerWidth < 768;
+    
+    // Function to set sidebar state
+    function setSidebarState(collapsed) {
+      sidebar.classList.toggle("collapsed", collapsed);
+      body.classList.toggle("sidebar-collapsed", collapsed);
+      
+      // Handle sidebar content visibility
       if (sidebarContent) {
-        sidebarContent.classList.add("hidden-content");
+        sidebarContent.classList.toggle("hidden-content", collapsed);
+      }
+      
+      // Store preference in localStorage, separating mobile/desktop preferences
+      if (isMobile()) {
+        localStorage.setItem("sidebarCollapsedMobile", collapsed);
+      } else {
+        localStorage.setItem("sidebarCollapsedDesktop", collapsed);
       }
     }
-  
+    
+    // Initial state based on screen size
+    function initializeSidebar() {
+      if (isMobile()) {
+        // On mobile, check saved state or default to collapsed
+        const mobileState = localStorage.getItem("sidebarCollapsedMobile");
+        if (mobileState === null || mobileState === "true") {
+          // Default or saved as collapsed
+          setSidebarState(true);
+        } else {
+          setSidebarState(false);
+        }
+      } else {
+        // On desktop, check saved state or default to expanded
+        const desktopState = localStorage.getItem("sidebarCollapsedDesktop");
+        if (desktopState === "true") {
+          setSidebarState(true);
+        } else {
+          // Default to expanded on desktop
+          setSidebarState(false);
+        }
+      }
+    }
+    
+    // Initialize on page load
+    initializeSidebar();
+    
+    // Set up toggle button click handler
     if (toggleBtn && sidebar) {
       toggleBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
-  
-        if (sidebarContent) {
-          sidebarContent.classList.toggle("hidden-content");
-        }
+        const isCurrentlyCollapsed = sidebar.classList.contains("collapsed");
+        setSidebarState(!isCurrentlyCollapsed);
       });
     }
+    
+    // Handle screen size changes
+    let lastScreenSize = isMobile();
+    
+    window.addEventListener('resize', () => {
+      const currentIsMobile = isMobile();
+      
+      // Only trigger when crossing the mobile/desktop threshold
+      if (currentIsMobile !== lastScreenSize) {
+        lastScreenSize = currentIsMobile;
+        initializeSidebar();
+      }
+      
+      // Additional responsive adjustments for exercise categories
+      adjustExerciseCategories();
+    });
+  }
+  
+  // Function to make additional responsive adjustments to exercise categories
+  function adjustExerciseCategories() {
+    // Adjust modal size on mobile
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent && window.innerWidth < 768) {
+      modalContent.style.width = '95%';
+      modalContent.style.maxWidth = '400px';
+    } else if (modalContent) {
+      modalContent.style.width = '80%';
+      modalContent.style.maxWidth = '600px';
+    }
+    
+    // Make sure GIFs are responsive
+    const exerciseGifs = document.querySelectorAll('.exercise-gif');
+    exerciseGifs.forEach(gif => {
+      gif.style.maxWidth = '100%';
+    });
   }
   
   // Exercise data

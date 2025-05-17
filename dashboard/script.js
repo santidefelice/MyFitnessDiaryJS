@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Initialize authentication listener
   initializeAuth()
+  
 })
 
 function initializeAuth() {
@@ -400,28 +401,45 @@ function setupEventListeners() {
 }
 
 function setupSidebarToggle() {
-  const sidebar = document.getElementById("sidebar")
-  const toggleBtn = document.getElementById("toggle-btn")
-  const sidebarContent = document.querySelectorAll(
-    "#sidebar > *:not(#toggle-btn)"
-  )
-
-  if (sidebar) {
-    sidebar.classList.add("collapsed")
-
-    sidebarContent.forEach((element) => {
-      element.classList.add("hidden-content")
-    })
+  const sidebar = document.getElementById("sidebar");
+  const toggleBtn = document.getElementById("toggle-btn");
+  const body = document.body;
+  
+  // Check if sidebar should start collapsed based on screen size
+  function checkWindowSize() {
+    if (window.innerWidth < 768) {
+      // On mobile, start with collapsed sidebar
+      sidebar.classList.add("collapsed");
+      body.classList.add("sidebar-collapsed");
+    }
   }
-
+  
+  // Run once on page load
+  checkWindowSize();
+  
+  // Also run when window is resized
+  window.addEventListener('resize', checkWindowSize);
+  
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed")
-
-      sidebarContent.forEach((element) => {
-        element.classList.toggle("hidden-content")
-      })
-    })
+      sidebar.classList.toggle("collapsed");
+      body.classList.toggle("sidebar-collapsed");
+      
+      // Store preference in localStorage
+      const isCollapsed = sidebar.classList.contains("collapsed");
+      localStorage.setItem("sidebarCollapsed", isCollapsed);
+    });
+  }
+  
+  // Restore user preference if available
+  const savedState = localStorage.getItem("sidebarCollapsed");
+  if (savedState === "true") {
+    sidebar.classList.add("collapsed");
+    body.classList.add("sidebar-collapsed");
+  } else if (savedState === "false" && window.innerWidth >= 768) {
+    // Only expand on larger screens
+    sidebar.classList.remove("collapsed");
+    body.classList.remove("sidebar-collapsed");
   }
 }
 
@@ -746,6 +764,8 @@ function saveWorkoutData(workoutData) {
 
   console.log("Workout data save initiated")
 }
+
+
 
 // Add some CSS for the floating message
 document.head.insertAdjacentHTML('beforeend', `

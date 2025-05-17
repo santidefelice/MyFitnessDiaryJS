@@ -1,3 +1,4 @@
+/* Preserve original desktop styles */
 * {
     margin: 0;
     padding: 0;
@@ -280,6 +281,10 @@ input:checked + .slider:before {
 /* Icons and text alignment */
 .sidenav__icon {
     margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s, width 0.3s, height 0.3s;
 }
   
 .sidenav__text {
@@ -320,29 +325,154 @@ input:checked + .slider:before {
     overflow: hidden;
 }
 
+/* Hide icons when sidebar is collapsed */
+.sidebar.collapsed .sidenav__icon {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
 .hidden-content {
     opacity: 0;
     width: 0;
     overflow: hidden;
 }
 
-/* Responsive adjustments */
+/* Mobile navigation menu button (only visible on mobile) */
+.mobile-menu-btn {
+    display: none;
+    background: #fff;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 200;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Mobile header (only visible on mobile) */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    z-index: 150;
+    padding: 0 15px;
+    align-items: center;
+}
+
+.mobile-header-title {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+/* MOBILE STYLES - Only apply these styles for screens <= 768px width */
 @media (max-width: 768px) {
+    body {
+        padding-top: 60px; /* Space for fixed mobile header */
+    }
+    
+    /* Show mobile header */
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    /* Show mobile menu button */
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    /* Transform sidebar into dropdown */
     .sidebar#sidebar {
-        width: 60px;
-    }
-    
-    .sidebar#sidebar .sidenav__text {
-        opacity: 0;
-        width: 0;
+        height: auto;
+        max-height: 0;
         overflow: hidden;
+        position: fixed;
+        width: 100%;
+        top: 60px; /* Position below header */
+        left: 0;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        transition: max-height 0.3s ease-in-out;
+        opacity: 0;
     }
     
+    /* When mobile menu is active */
+    .sidebar#sidebar.mobile-active {
+        max-height: 500px; /* Adjust based on your menu size */
+        opacity: 1;
+    }
+    
+    /* Both expanded and collapsed sidebar in mobile view */
+    .sidebar#sidebar, 
+    .sidebar#sidebar.collapsed {
+        width: 100%;
+        z-index: 150;
+        background: #f9f9f9;
+    }
+    
+    /* Collapsed sidebar shouldn't be 60px width on mobile */
+    .sidebar#sidebar.collapsed {
+        width: 100%;
+    }
+    
+    /* Sidebar toggle button hidden on mobile */
+    .sidebar#sidebar .toggle-btn {
+        display: none;
+    }
+    
+    /* Menu items in mobile view */
+    .sidebar#sidebar .sidenav__link {
+        padding: 15px;
+        justify-content: flex-start;
+    }
+    
+    /* Show text even in collapsed state for mobile view */
+    .sidebar#sidebar.collapsed .sidenav__text {
+        opacity: 1;
+        width: auto;
+        overflow: visible;
+    }
+    
+    /* Show icons even in collapsed state for mobile view */
+    .sidebar#sidebar.collapsed .sidenav__icon {
+        opacity: 1;
+        width: auto;
+        height: auto;
+        overflow: visible;
+    }
+    
+    /* On mobile, display icon beside text horizontally */
+    .sidebar#sidebar .sidenav__icon {
+        margin-bottom: 0;
+        margin-right: 15px;
+    }
+    
+    /* Adjust text size for mobile */
+    .sidebar#sidebar .sidenav__text {
+        font-size: 1rem;
+    }
+    
+    /* Container adjustment for mobile */
     .container {
-        margin-left: 60px;
-        width: calc(100% - 60px);
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
     }
     
+    /* Account panel adjustments */
     .account-panel {
         flex-direction: column;
     }
@@ -351,11 +481,94 @@ input:checked + .slider:before {
         width: 100%;
         border-right: none;
         border-bottom: 1px solid #eee;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
     }
     
     .account-panel .sidebar button {
         display: inline-block;
         width: auto;
         border-bottom: none;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        padding: 15px 20px;
+    }
+    
+    .account-panel .sidebar button.active {
+        border-left: none;
+        border-bottom: 3px solid #1890ff;
+    }
+    
+    /* Profile info adjustments */
+    .profile-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 80px;
+        height: 80px;
+        font-size: 30px;
+    }
+    
+    .user-details {
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Modify the sidebar positioning for mobile */
+    .sidebar#sidebar {
+        position: relative; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        margin-bottom: 0; 
+        opacity: 0;
+        z-index: 100;
+    }
+    
+    /* When mobile menu is active */
+    .sidebar#sidebar.mobile-active {
+        max-height: 500px; /* Adjust based on your menu size */
+        margin-bottom: 20px; /* Add space below the expanded menu */
+        opacity: 1;
+    }
+    
+    /* Adjust body padding to account for fixed header only */
+    body {
+        padding-top: 60px; /* Space for fixed mobile header only */
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Container should flow after the sidebar in the document */
+    .container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        transition: margin-top 0.3s ease-in-out;
+    }
+    
+    /* Update mobile header to be truly fixed */
+    .mobile-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 150; /* Higher than sidebar */
+    }
+    
+    /* Make the whole page structure flex-based for mobile */
+    body {
+        display: flex;
+        flex-direction: column;
     }
 }

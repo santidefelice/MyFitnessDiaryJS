@@ -1186,36 +1186,112 @@ function setupSidebarToggle() {
   const sidebarText = document.querySelectorAll(
     "#sidebar .sidenav__text, #sidebar .sidenav__divider"
   );
+  const isMobile = () => window.innerWidth < 768;
   
-  // Initialize sidebar state
-  if (sidebar) {
-    // Check if sidebar has a stored state in localStorage
-    const sidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
-    
-    if (!sidebarExpanded) {
-      sidebar.classList.add("collapsed");
-      sidebarText.forEach((element) => {
-        element.classList.add("hidden-content");
-      });
+  // Initialize sidebar state differently based on screen size
+  function initializeSidebar() {
+    if (isMobile()) {
+      // On mobile - check stored mobile preference
+      const mobileState = localStorage.getItem("sidebarCollapsedMobile");
+      const shouldBeCollapsed = mobileState === null ? true : mobileState === "true";
+      
+      if (shouldBeCollapsed) {
+        // Collapse sidebar on mobile by default or if previously collapsed
+        sidebar.classList.add("collapsed");
+        sidebarText.forEach((element) => {
+          element.classList.add("hidden-content");
+        });
+      } else {
+        // Keep expanded if previously expanded
+        sidebar.classList.remove("collapsed");
+        sidebarText.forEach((element) => {
+          element.classList.remove("hidden-content");
+        });
+      }
+    } else {
+      // On desktop - use original sidebar setup
+      // Check if sidebar has a stored state in localStorage
+      const sidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+      
+      if (!sidebarExpanded) {
+        sidebar.classList.add("collapsed");
+        sidebarText.forEach((element) => {
+          element.classList.add("hidden-content");
+        });
+      } else {
+        sidebar.classList.remove("collapsed");
+        sidebarText.forEach((element) => {
+          element.classList.remove("hidden-content");
+        });
+      }
     }
   }
   
+  // Initialize on page load
+  initializeSidebar();
+  
+  // Set up toggle button click handler
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener("click", () => {
       // Toggle sidebar collapsed state
       sidebar.classList.toggle("collapsed");
       
-      // Track if sidebar is now expanded
-      const isExpanded = !sidebar.classList.contains("collapsed");
-      
-      // Store state in localStorage for persistence
-      localStorage.setItem('sidebarExpanded', isExpanded);
-      
       // Toggle visibility of sidebar text elements
       sidebarText.forEach((element) => {
         element.classList.toggle("hidden-content");
       });
+      
+      // Store state in appropriate storage key based on device
+      if (isMobile()) {
+        localStorage.setItem("sidebarCollapsedMobile", sidebar.classList.contains("collapsed"));
+      } else {
+        localStorage.setItem('sidebarExpanded', !sidebar.classList.contains("collapsed"));
+      }
     });
+  }
+  
+  // Handle screen size changes
+  let lastScreenSize = isMobile();
+  
+  window.addEventListener('resize', () => {
+    const currentIsMobile = isMobile();
+    
+    // Only trigger when crossing the mobile/desktop threshold
+    if (currentIsMobile !== lastScreenSize) {
+      lastScreenSize = currentIsMobile;
+      initializeSidebar();
+      adjustMobileLayout();
+    }
+  });
+  
+  // Initial call to adjust mobile layout
+  adjustMobileLayout();
+}
+
+// Function to apply mobile-specific adjustments
+function adjustMobileLayout() {
+  if (window.innerWidth < 768) {
+    // Adjust content container sizes for mobile
+    const chartContainer = document.querySelector('.chart-container');
+    if (chartContainer) {
+      chartContainer.style.height = '250px';
+    }
+    
+    // Adjust progress circle sizes for mobile
+    const circleContainers = document.querySelectorAll('.progress-circle-container');
+    circleContainers.forEach(container => {
+      container.style.width = '120px';
+      container.style.height = '120px';
+    });
+    
+    // Force chart redraw for mobile
+    if (window.weightChartInstance) {
+      setTimeout(() => {
+        if (typeof window.weightChartInstance.resize === 'function') {
+          window.weightChartInstance.resize();
+        }
+      }, 100);
+    }
   }
 }
 

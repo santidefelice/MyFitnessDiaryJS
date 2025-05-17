@@ -640,3 +640,284 @@
     cursor: pointer;
     margin: 10px;
   }
+
+  /* Add this to your list.css file */
+
+/* Reset sidebar behavior */
+#sidebar {
+  transition: all 0.3s ease;
+  width: 250px;
+  min-height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  height: 100%;
+}
+
+#sidebar.collapsed {
+  width: 60px;
+}
+
+/* Adjust main content to work with fixed sidebar */
+.main-content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  width: calc(100% - 250px);
+}
+
+body.sidebar-collapsed .main-content {
+  margin-left: 60px;
+  width: calc(100% - 60px);
+}
+
+/* Sidebar Icons */
+.sidenav__icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  display: block;
+  color: currentColor;
+  margin: 0 auto 4px;
+}
+
+/* Ensure icons are visible in both collapsed and expanded states */
+#sidebar.collapsed .sidenav__icon {
+  margin: 0 auto;
+}
+
+#sidebar:not(.collapsed) .sidenav__icon {
+  margin-bottom: 4px;
+}
+
+/* Exercise library responsive adjustments */
+.exercise-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.exercise-gif {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 15px auto;
+  border-radius: 4px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  /* Sidebar mobile adjustments */
+  #sidebar {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid #e4e9f0;
+  }
+  
+  #sidebar.collapsed {
+    width: 100%;
+    height: 60px;
+    overflow: hidden;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  body.sidebar-collapsed .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  /* For mobile, show navigation differently */
+  .sidenav__list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  #sidebar:not(.collapsed) .sidenav__list {
+    flex-direction: column;
+  }
+  
+  /* Fix toggle button position on mobile */
+  #toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 101;
+  }
+  
+  /* In mobile collapsed state, we'll show only the icons */
+  #sidebar.collapsed .sidenav__text {
+    display: none;
+  }
+  
+  /* In mobile expanded state, show icons and text in proper layout */
+  #sidebar:not(.collapsed) .sidenav__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* Exercise categories responsive adjustments */
+  .exercise-categories {
+    grid-template-columns: 1fr;
+  }
+  
+  .category {
+    padding: 10px;
+  }
+  
+  .filter-buttons {
+    gap: 5px;
+  }
+  
+  .filter-button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  
+  .search-container {
+    flex-direction: row;
+  }
+  
+  #searchExercises {
+    min-height: 40px;
+    font-size: 14px;
+  }
+  
+  /* Modal responsive adjustments */
+  .modal-content {
+    width: 95%;
+    max-width: 400px;
+    padding: 15px;
+  }
+}
+
+/* Tablet and Desktop adjustments */
+@media (min-width: 768px) {
+  .dashboard-layout {
+    flex-direction: row;
+  }
+  
+  #sidebar {
+    position: fixed;
+  }
+  
+  .sidenav__list {
+    display: block;
+  }
+  
+  .sidenav__item {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* In desktop expanded state, show icons and text in horizontal layout */
+  #sidebar:not(.collapsed) .sidenav__link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  #sidebar:not(.collapsed) .sidenav__icon {
+    margin: 0 12px 0 0;
+  }
+  
+  /* In desktop collapsed state, show only icons with text below */
+  #sidebar.collapsed .sidenav__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+  }
+}
+
+/* Additional styles for the Exercise Modal */
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: #888;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #333;
+}
+
+#exerciseDetailName {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+#exerciseDetailType, #exerciseDetailMuscle {
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.exercise-gif {
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  margin: 15px auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 767px) {
+  .modal-content {
+    width: 95%;
+    padding: 20px 15px;
+    margin: 0;
+  }
+  
+  #exerciseDetailName {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  .exercise-gif {
+    max-height: 250px;
+  }
+  
+  .close {
+    top: 5px;
+    right: 10px;
+  }
+}
