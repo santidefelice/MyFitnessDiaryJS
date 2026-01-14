@@ -230,10 +230,10 @@
                         <h4>Add New Goal</h4>
                         <div class="form-group">
                             <label for="exercise-select">Exercise</label>
-                            <select id="exercise-select">
-                                <option value="">Select an exercise</option>
+                            <input type="text" id="exercise-select" list="exercise-options" placeholder="Type or select an exercise">
+                            <datalist id="exercise-options">
                                 <!-- Options will be added dynamically -->
-                            </select>
+                            </datalist>
                         </div>
                         <div class="form-group">
                             <label for="current-strength">Current (lbs)</label>

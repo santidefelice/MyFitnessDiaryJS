@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
-import { getFirestore, addDoc, collection, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import { doc, getDoc, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -580,16 +580,19 @@ function renderStrengthGoalsEdit() {
     goalRow.innerHTML = `
       <div class="goal-edit-name">
         <span class="goal-color-preview" style="background-color: ${goal.color}"></span>
-        ${goal.exercise}
+        <input type="text" class="exercise-name-edit" data-id="${goal.id}" value="${goal.exercise}" placeholder="Exercise name">
       </div>
       <div class="goal-edit-input">
-        <input type="number" class="current-edit" data-id="${goal.id}" value="${goal.current}">
+        <input type="number" class="current-edit" data-id="${goal.id}" value="${goal.current}" placeholder="Current">
       </div>
       <div class="goal-edit-input">
-        <input type="number" class="goal-edit" data-id="${goal.id}" value="${goal.goal}">
+        <input type="number" class="goal-edit" data-id="${goal.id}" value="${goal.goal}" placeholder="Goal">
       </div>
       <div class="goal-edit-input">
         <input type="color" class="color-edit" data-id="${goal.id}" value="${goal.color}">
+      </div>
+      <div class="goal-edit-input goal-edit-description">
+        <input type="text" class="description-edit" data-id="${goal.id}" value="${goal.description || ''}" placeholder="Description">
       </div>
       <div class="goal-delete">
         <button class="btn delete-btn" data-id="${goal.id}">Delete</button>
@@ -631,6 +634,24 @@ function attachStrengthGoalEventListeners(goalRow, goalId) {
     if (goal) {
       goal.color = value;
       goalRow.querySelector('.goal-color-preview').style.backgroundColor = value;
+    }
+  });
+
+  // Description input
+  goalRow.querySelector('.description-edit').addEventListener('change', function() {
+    const value = this.value;
+    const goal = userData.strengthGoals.find(g => g.id === goalId);
+    if (goal) goal.description = value;
+  });
+
+  // Exercise name input
+  goalRow.querySelector('.exercise-name-edit').addEventListener('change', function() {
+    const value = this.value.trim();
+    const goal = userData.strengthGoals.find(g => g.id === goalId);
+    if (goal && value) {
+      goal.exercise = value;
+      // Re-initialize exercise select to reflect the change
+      initExerciseSelect();
     }
   });
 }
@@ -691,21 +712,22 @@ function renderVolumeWeeklyInputs(weekIndex) {
 
 function initExerciseSelect() {
   const exerciseSelect = document.getElementById('exercise-select');
+  const exerciseDatalist = document.getElementById('exercise-options');
   
-  if (!exerciseSelect || !userData || !userData.strengthGoals) {
+  if (!exerciseSelect || !exerciseDatalist || !userData || !userData.strengthGoals) {
     console.error("Missing exercise select or user data");
     return;
   }
   
-  exerciseSelect.innerHTML = '<option value="">Select an exercise</option>';
+  // Clear the datalist
+  exerciseDatalist.innerHTML = '';
 
   exerciseOptions.forEach(exercise => {
     // Only add exercises that aren't already in the goals list
     if (!userData.strengthGoals.some(goal => goal.exercise === exercise)) {
       const option = document.createElement('option');
       option.value = exercise;
-      option.textContent = exercise;
-      exerciseSelect.appendChild(option);
+      exerciseDatalist.appendChild(option);
     }
   });
 }

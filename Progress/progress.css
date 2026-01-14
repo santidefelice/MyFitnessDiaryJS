@@ -489,11 +489,35 @@ input[type="color"] {
 .goal-edit-name {
     flex: 2;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.goal-edit-name input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .goal-edit-input {
     flex: 1;
     padding: 0 5px;
+}
+
+.goal-edit-description {
+    flex: 2;
+}
+
+.goal-edit-description input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
 }
 
 .goal-color-preview {
